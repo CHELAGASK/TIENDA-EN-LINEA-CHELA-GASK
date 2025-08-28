@@ -1,295 +1,133 @@
 <!DOCTYPE html>
-<html lang="es"> 
+<html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chela Gask | Tienda</title>
-  <link rel="icon" href="logochelagask.jpg" type="image/jpeg" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda en Línea - CHELA GASK</title>
   <style>
-    :root{
-      --bg:#ffffff;--text:#111;--muted:#666;--brand:#111;--accent:#ff3b30;--pill:#f4f4f4;--card:#fafafa;--border:#eaeaea;
-    }
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans, "Apple Color Emoji","Segoe UI Emoji";}
-    a{color:inherit;text-decoration:none}
-    img{max-width:100%;display:block}
-    
-    /* Header */
-    .header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);} 
-    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:12px 16px}
-    .logo{display:flex;align-items:center;gap:10px}
-    .logo img{height:28px;width:auto}
-    .brand{font-weight:700;letter-spacing:.3px}
-    .nav{display:flex;gap:20px;margin-left:28px}
-    .nav a{padding:8px 10px;border-radius:12px}
-    .nav a:hover{background:var(--pill)}
-    .spacer{flex:1}
-    .icon-btn{height:36px;width:36px;display:grid;place-items:center;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
-    .icon-btn:hover{background:var(--pill)}
-    .badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#fff;border-radius:999px;font-size:11px;padding:2px 6px}
-    .cart-wrap{position:relative}
-
-    /* Drawer (asegurado por encima del carrusel) */
-    .drawer{position:fixed;inset:0;pointer-events:none;z-index:1001}
-    .drawer.open{pointer-events:auto}
-    .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.28);opacity:0;transition:.2s}
-    .drawer.open .backdrop{opacity:1}
-    .panel{position:absolute;left:0;top:0;height:100%;width:290px;background:#fff;transform:translateX(-100%);transition:.25s;border-right:1px solid var(--border);display:flex;flex-direction:column}
-    .drawer.open .panel{transform:translateX(0)}
-    .panel header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border)}
-    .panel nav a{display:block;padding:14px 16px;border-bottom:1px solid var(--border)}
-
-    /* Sections */
-    .container{max-width:1200px;margin:0 auto;padding:10px 16px 40px}
-    .bar{display:flex;align-items:center;gap:10px;padding:12px 8px;font-weight:700}
-    .bar .dot{height:8px;width:8px;border-radius:999px;background:#000}
-
-    /* Carousel (mostrar imagen completa y adaptativa) */
-    .carousel{position:relative;border-radius:16px;overflow:hidden;background:#000;border:1px solid var(--border);aspect-ratio:16/9}
-    .carousel img{width:100%;height:100%;object-fit:contain}
-    .carousel .dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px}
-    .carousel .dots span{height:8px;width:8px;border-radius:999px;background:#fff;opacity:.5;border:1px solid #000}
-    .carousel .dots span.active{opacity:1}
-
-    /* Grids */
-    .grid{display:grid;gap:14px}
-    .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-    .grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
-    @media (max-width:960px){.grid.cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media (max-width:720px){
-      .grid.cols-3{grid-template-columns:repeat(1,minmax(0,1fr))}
-      .carousel{aspect-ratio:4/3}
-    }
-
-    .card{border:1px solid var(--border);border-radius:16px;background:#fff;overflow:hidden;display:flex;flex-direction:column}
-    .card .meta{padding:10px 12px}
-    .price{font-weight:700}
-    .muted{color:var(--muted)}
-
-    /* Footer banner */
-    .banner{margin-top:24px;border:1px dashed var(--border);border-radius:16px;padding:18px;background:#f9fafb}
-    .banner h3{margin:0 0 8px 0}
-    .footer{margin-top:26px;padding:26px 16px;border-top:1px solid var(--border);color:#555}
-
-    /* Toast */
-    .toast{position:fixed;right:16px;bottom:16px;background:#111;color:#fff;padding:12px 14px;border-radius:12px;opacity:0;transform:translateY(8px);transition:.25s;z-index:60}
-    .toast.show{opacity:1;transform:translateY(0)}
-
-    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:#111;color:#fff;cursor:pointer}
-    .btn.secondary{background:#fff;color:#111}
-    .qty{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:12px}
-    .qty button{background:#fff;border:0;padding:8px 10px;cursor:pointer}
-    .qty span{width:38px;display:inline-grid;place-items:center}
-
-    .form{display:grid;gap:12px}
-    .form .row{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
-    @media (max-width:720px){.form .row{grid-template-columns:1fr}}
-    input,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);}
-    label{font-size:.9rem;color:#333}
-    .error{color:var(--accent);font-size:.9rem}
+    body { margin: 0; font-family: Arial, sans-serif; background: #f8f8f8; }
+    header { background: #222; padding: 10px; text-align: center; }
+    header img { max-height: 80px; }
+    nav { background: #444; padding: 10px; text-align: center; }
+    nav a { color: white; margin: 0 15px; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    main { padding: 20px; }
+    .producto { background: white; padding: 15px; border-radius: 10px; margin: 10px auto; max-width: 500px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    .producto img { max-width: 100%; border-radius: 10px; }
+    .btn { display: inline-block; margin-top: 10px; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+    .btn-primary { background: #28a745; color: white; }
+    .btn-fav { background: #ff5722; color: white; margin-left: 10px; }
   </style>
 </head>
 <body>
-  <!-- HEADER -->
-  <header class="header">
-    <div class="header-inner">
-      <button id="menuBtn" class="icon-btn" aria-label="Menú">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-      </button>
-      <a href="#/" class="logo" title="Inicio">
-        <img src="logochelagask.jpg" alt="Logo Chela Gask" onerror="this.src='https://dummyimage.com/120x40/000/fff&text=CHELA+GASK'"/>
-        <span class="brand">Chela Gask</span>
-      </a>
-      <nav class="nav" id="topNav">
-        <!-- Subcategorías visibles tipo Nike (dejé el HTML idéntico) -->
-        <a href="caballero.html">Caballero</a>
-        <a href="dama.html">Dama</a>
-        <a href="niño.html">Niñ@</a>
-        <a href="accesorios.html">Accesorios</a>
-        <a href="ropones.html">Ropones</a>
-        <a href="bisuteria.html">Bisutería</a>
-      </nav>
-      <div class="spacer"></div>
-      <!-- (4) Corregido: botón va a #/favoritos -->
-      <a class="icon-btn" href="#/favoritos" aria-label="Favoritos" title="Favoritos">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-      </a>
-      <a class="icon-btn cart-wrap" href="carrito.html" aria-label="Carrito" title="Carrito">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 12.39A2 2 0 0 0 9.62 15h8.76a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        <span id="cartCount" class="badge" style="display:none">0</span>
-      </a>
-    </div>
+  <!-- Banner -->
+  <header>
+    <img src="logochelagask.jpg" alt="CHELA GASK">
   </header>
 
-  <!-- DRAWER -->
-  <div id="drawer" class="drawer">
-    <div class="backdrop" onclick="toggleDrawer(false)"></div>
-    <aside class="panel" role="dialog" aria-label="Menú lateral">
-      <header>
-        <strong>Menú</strong>
-        <button class="icon-btn" onclick="toggleDrawer(false)" aria-label="Cerrar">✕</button>
-      </header>
-      <nav>
-        <a href="#/" onclick="toggleDrawer(false)">Inicio</a>
-        <a href="#/categoria/caballero" onclick="toggleDrawer(false)">Caballero</a>
-        <a href="#/categoria/dama" onclick="toggleDrawer(false)">Dama</a>
-        <a href="#/categoria/nino" onclick="toggleDrawer(false)">Niñ@</a>
-        <a href="#/categoria/accesorios" onclick="toggleDrawer(false)">Accesorios</a>
-        <a href="#/categoria/ropones" onclick="toggleDrawer(false)">Ropones</a>
-        <a href="#/categoria/bisuteria" onclick="toggleDrawer(false)">Bisutería</a>
-        <a href="#/favoritos" onclick="toggleDrawer(false)">Favoritos</a>
-        <a href="#/carrito" onclick="toggleDrawer(false)">Carrito</a>
-      </nav>
-    </aside>
-  </div>
+  <!-- Navegación -->
+  <nav>
+    <a href="#/">Inicio</a>
+    <a href="#/productos">Productos</a>
+    <a href="#/favoritos">Favoritos</a>
+  </nav>
 
-  <!-- MAIN RENDER -->
-  <main id="app" class="container"></main>
-
-  <div id="toast" class="toast"></div>
-
-  <footer class="footer">
-    © <span id="year"></span> Chela Gask. Todos los derechos reservados.
-  </footer>
+  <!-- Contenido dinámico -->
+  <main id="app"></main>
 
   <script>
-    // ==========================
-    // CONFIGURACIÓN
-    // ==========================
-    const CAROUSEL_IMAGES = [
-      'modelo1.jpg',
-      'modelo2.jpg',
-      'modelo3.jpg'
-    ];
-    const CAROUSEL_INTERVAL_MS = 4000;
+    const app = document.getElementById('app');
 
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQA5cjti6B1RjNH6KVj-bap6xLoILJ91CONi5d6Ybj1R6T0etd44373NBhCxLYY-yqQPtepU1rWy0hd/pub?output=csv';
-
-    // Fallback
-    let PRODUCTS = [
-      { id:'CG-001', nombre:'Playera Básica', categoria:'caballero', precio:199, imagenes:['assets/p1-1.jpg','assets/p1-2.jpg'], tallas:['S','M','L','XL'], stock:{'S':10,'M':8,'L':6,'XL':3}, promo:true },
-      { id:'CG-002', nombre:'Blusa Casual', categoria:'dama', precio:249, imagenes:['assets/p2-1.jpg','assets/p2-2.jpg'], tallas:['XS','S','M','L'], stock:{'XS':4,'S':7,'M':5,'L':2}, promo:false },
-      { id:'CG-003', nombre:'Conjunto Niño', categoria:'nino', precio:299, imagenes:['assets/p3-1.jpg'], tallas:['2','4','6','8'], stock:{'2':5,'4':6,'6':3,'8':2}, promo:true },
-      { id:'CG-004', nombre:'Ropón Ceremonia', categoria:'ropones', precio:899, imagenes:['assets/p4.jpg'], tallas:['Única'], stock:{'Única':5}, promo:true },
-      { id:'CG-005', nombre:'Collar Acero', categoria:'bisuteria', precio:149, imagenes:['assets/p5.jpg'], tallas:['Única'], stock:{'Única':20}, promo:false },
-      { id:'CG-006', nombre:'Gorra Logo', categoria:'accesorios', precio:179, imagenes:['assets/p6.jpg'], tallas:['Única'], stock:{'Única':12}, promo:false },
-      { id:'CG-007', nombre:'Sudadera Unisex', categoria:'caballero', precio:499, imagenes:['assets/p7.jpg'], tallas:['S','M','L'], stock:{'S':5,'M':5,'L':5}, promo:true },
-      { id:'CG-008', nombre:'Vestido Largo', categoria:'dama', precio:699, imagenes:['assets/p8.jpg'], tallas:['S','M','L'], stock:{'S':2,'M':3,'L':1}, promo:false }
+    // Datos de productos (puedes ampliar)
+    const productos = [
+      { id: 1, nombre: "Blusa Dama", precio: 250, imagen: "https://via.placeholder.com/400x300?text=Blusa+Dama" },
+      { id: 2, nombre: "Camisa Caballero", precio: 300, imagen: "https://via.placeholder.com/400x300?text=Camisa+Caballero" }
     ];
 
-    const BANNER_INFO = {
-      titulo: 'Atención y envíos',
-      lineas: [
-        'Envíos a todo México. Tiempo estimado 2–5 días hábiles.',
-        'Cambios y devoluciones dentro de los 7 días con ticket.',
-        'WhatsApp de atención: 44xx xxx xxx (10:00–19:00).',
-        'Promos y novedades en Instagram: @chelagask.'
-      ]
-    };
+    // Favoritos (guardados en localStorage)
+    let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
 
-    // ==========================
-    // UTILIDADES
-    // ==========================
-    const $ = s => document.querySelector(s);
-    const app = $('#app');
-    const toast = $('#toast');
-    const state = { idx:0 };
-    const CATS = ['caballero','dama','nino','accesorios','ropones','bisuteria'];
-
-    function showToast(msg){
-      toast.textContent = msg; toast.classList.add('show');
-      setTimeout(()=>toast.classList.remove('show'), 5000);
-    }
-    function money(n){ return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(n) }
-
-    function getCart(){ try{ return JSON.parse(localStorage.getItem('cg_cart')||'[]'); }catch(e){return []}}
-    function setCart(items){ localStorage.setItem('cg_cart', JSON.stringify(items)); updateCartCount(); }
-    function updateCartCount(){ const c = getCart().reduce((a,i)=>a+i.cantidad,0); const el=$('#cartCount'); el.textContent=c; el.style.display=c? 'inline-block':'none'; }
-
-    // Favoritos (4 y 8)
-    function getFavs(){ try{ return JSON.parse(localStorage.getItem('cg_favs')||'[]'); }catch(e){return []} }
-    function setFavs(v){ localStorage.setItem('cg_favs', JSON.stringify(v)); }
-    function addFav(id){
-      const f = getFavs();
-      if(!f.includes(id)){ f.push(id); setFavs(f); showToast('Agregado a favoritos.'); }
-      else showToast('Ya está en favoritos.');
+    // Guardar favoritos en localStorage
+    function guardarFavoritos() {
+      localStorage.setItem("favoritos", JSON.stringify(favoritos));
     }
 
-    // Normaliza texto: quita acentos y ñ -> n para comparar categorías
-    function normalizeForCompare(s){
-      if(!s) return '';
-      return s.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ñ/g,'n').trim();
-    }
+    // Rutas
+    function router() {
+      const hash = location.hash || "#/";
+      app.innerHTML = "";
 
-    // ---------------- CSV PARSER
-    function parseCSV(text){
-      const rows = [];
-      const lines = text.split(/\r?\n/);
-      for(let raw of lines){
-        if(raw.trim()==='') continue;
-        const values = [];
-        let cur=''; let inQuotes=false;
-        for(let i=0;i<raw.length;i++){
-          const ch = raw[i];
-          if(ch === '"'){
-            if(inQuotes && raw[i+1] === '"'){ cur += '"'; i++; } 
-            else { inQuotes = !inQuotes; }
-          } else if(ch === ',' && !inQuotes){
-            values.push(cur);
-            cur = '';
-          } else {
-            cur += ch;
-          }
+      if (hash === "#/") {
+        app.innerHTML = "<h2>Bienvenido a CHELA GASK</h2><p>Tu tienda de confianza.</p>";
+      } 
+      else if (hash === "#/productos") {
+        app.innerHTML = "<h2>Productos</h2>";
+        productos.forEach(p => {
+          app.innerHTML += `
+            <div class="producto">
+              <h3>${p.nombre}</h3>
+              <img src="${p.imagen}" alt="${p.nombre}">
+              <p>Precio: $${p.precio}</p>
+              <a class="btn btn-primary" href="#/producto/${p.id}">Ver Detalles</a>
+            </div>
+          `;
+        });
+      } 
+      else if (hash.startsWith("#/producto/")) {
+        const id = parseInt(hash.split("/")[2]);
+        const producto = productos.find(p => p.id === id);
+        if (producto) {
+          app.innerHTML = `
+            <div class="producto">
+              <h2>${producto.nombre}</h2>
+              <img src="${producto.imagen}" alt="${producto.nombre}">
+              <p>Precio: $${producto.precio}</p>
+              <button class="btn btn-primary">Comprar</button>
+              <button class="btn btn-fav" onclick="agregarFavorito(${producto.id})">Agregar a Favoritos</button>
+            </div>
+          `;
+        } else {
+          app.innerHTML = "<p>Producto no encontrado</p>";
         }
-        values.push(cur);
-        rows.push(values);
+      } 
+      else if (hash === "#/favoritos") {
+        app.innerHTML = "<h2>Mis Favoritos</h2>";
+        if (favoritos.length === 0) {
+          app.innerHTML += "<p>No tienes productos en favoritos.</p>";
+        } else {
+          favoritos.forEach(id => {
+            const producto = productos.find(p => p.id === id);
+            if (producto) {
+              app.innerHTML += `
+                <div class="producto">
+                  <h3>${producto.nombre}</h3>
+                  <img src="${producto.imagen}" alt="${producto.nombre}">
+                  <p>Precio: $${producto.precio}</p>
+                </div>
+              `;
+            }
+          });
+        }
+      } 
+      else {
+        app.innerHTML = "<h2>404 - Página no encontrada</h2>";
       }
-      return rows;
     }
 
-    // ---------------- CARGAR PRODUCTS DESDE CSV
-    async function fetchProductsFromCSV(url){
-      try{
-        const res = await fetch(url);
-        if(!res.ok) throw new Error('CSV fetch failed '+res.status);
-        const txt = await res.text();
-        const rows = parseCSV(txt);
-        if(rows.length < 2) throw new Error('CSV vacío o sin filas');
+    // Agregar producto a favoritos
+    function agregarFavorito(id) {
+      if (!favoritos.includes(id)) {
+        favoritos.push(id);
+        guardarFavoritos();
+        alert("Producto agregado a favoritos");
+      } else {
+        alert("Este producto ya está en favoritos");
+      }
+    }
 
-        const headers = rows[0].map(h => h.toString().toLowerCase().trim());
-        const mapped = [];
-        for(let i=1;i<rows.length;i++){
-          const row = rows[i];
-          if(row.every(c=>c==='')) continue;
-          const obj = {};
-          for(let j=0;j<headers.length;j++){
-            obj[headers[j]] = row[j] !== undefined ? row[j].trim() : '';
-          }
-          const p = {
-            id: obj.id || obj.sku || ('P-'+i),
-            nombre: obj.nombre || obj.title || '',
-            categoria: obj.categoria || obj.category || '',
-            precio: parseFloat((obj.precio||obj.price||'0').replace(/[^0-9.-]+/g,'')) || 0,
-            imagenes: [],
-            tallas: [],
-            stock: {},
-            promo: (obj.promo||'').toString().toLowerCase() === 'true'
-          };
-          if(obj.imagenes){
-            p.imagenes = obj.imagenes.split('|').map(x=>x.trim()).filter(Boolean);
-            if(p.imagenes.length===0) p.imagenes = obj.imagenes.split(',').map(x=>x.trim()).filter(Boolean);
-          }
-          if(obj.tallas) p.tallas = obj.tallas.split('|').map(x=>x.trim()).filter(Boolean);
-          if(p.tallas.length===0 && obj.tallas) p.tallas = obj.tallas.split(',').map(x=>x.trim()).filter(Boolean);
-
-          if(obj.stock){
-            const s = obj.stock.trim();
-            try{ p.stock = JSON.parse(s); }
-            catch(e){
-              const parts = s.split('|').map(x=>x.trim()).filter(Boolean);
-              parts.forEach(part=>{
-                const [k,v] = part.split(':').map(z=>z && z.trim());
-                if(k && v) p.stock[k] = parseInt(v)||0;
-              });
-            }
-          }
-          if(!p.imagenes || p.imagenes.length===0) p.imagenes = ['https://dummyimage.com/600x400/ddd/000&text=Sin+imagen'];
+    // Detectar cambios de ruta
+    window.addEventListener("hashchange", router);
+    window.addEventListener("load", router);
+  </script>
+</body>
+</html>
