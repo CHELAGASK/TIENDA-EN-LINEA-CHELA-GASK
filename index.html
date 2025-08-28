@@ -6,11 +6,11 @@
   <title>Chela Gask | Tienda</title>
   <style>
     :root{
-      --bg:#ffffff;--text:#111;--muted:#666;--brand:#111;--accent:#ff3b30;--pill:#f4f4f4;--card:#fafafa;--border:#eaeaea;
-    }
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans, "Apple Color Emoji","Segoe UI Emoji";}
-    a{color:inherit;text-decoration:none}
-    img{max-width:100%;display:block}
+--bg:#ffffff;--text:#111;--muted:#666;--brand:#111;--accent:#ff3b30;--pill:#f4f4f4;--card:#fafafa;--border:#eaeaea;
+}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans, "Apple Color Emoji","Segoe UI Emoji";}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
     
     /* Header */
     .header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);} 
@@ -26,7 +26,6 @@
     .icon-btn:hover{background:var(--pill)}
     .badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#fff;border-radius:999px;font-size:11px;padding:2px 6px}
     .cart-wrap{position:relative}
-
     /* Drawer */
     .drawer{position:fixed;inset:0;pointer-events:none}
     .drawer.open{pointer-events:auto}
@@ -96,7 +95,7 @@
         <span class="brand">Chela Gask</span>
       </a>
       <nav class="nav" id="topNav">
-        <!-- Subcategorías visibles tipo Nike -->
+        <!-- Subcategorías visibles tipo Nike (dejé el HTML idéntico) -->
         <a href="caballero.html">Caballero</a>
         <a href="dama.html">Dama</a>
         <a href="niño.html">Niñ@</a>
@@ -125,13 +124,13 @@
       </header>
       <nav>
         <a href="#/" onclick="toggleDrawer(false)">Inicio</a>
-        <a href="caballero.html" onclick="toggleDrawer(false)">Caballero</a>
-        <a href="dama.html" onclick="toggleDrawer(false)">Dama</a>
-        <a href="niño.html" onclick="toggleDrawer(false)">Niñ@</a>
-        <a href="accesorios.html" onclick="toggleDrawer(false)">Accesorios</a>
-        <a href="ropones.html" onclick="toggleDrawer(false)">Ropones</a>
-        <a href="bisuteria.html" onclick="toggleDrawer(false)">Bisutería</a>
-        <a href="carrito.html" onclick="toggleDrawer(false)">Carrito</a>
+        <a href="#/categoria/caballero" onclick="toggleDrawer(false)">Caballero</a>
+        <a href="#/categoria/dama" onclick="toggleDrawer(false)">Dama</a>
+        <a href="#/categoria/nino" onclick="toggleDrawer(false)">Niñ@</a>
+        <a href="#/categoria/accesorios" onclick="toggleDrawer(false)">Accesorios</a>
+        <a href="#/categoria/ropones" onclick="toggleDrawer(false)">Ropones</a>
+        <a href="#/categoria/bisuteria" onclick="toggleDrawer(false)">Bisutería</a>
+        <a href="#/carrito" onclick="toggleDrawer(false)">Carrito</a>
       </nav>
     </aside>
   </div>
@@ -145,22 +144,23 @@
     © <span id="year"></span> Chela Gask. Todos los derechos reservados.
   </footer>
 
-
   <script>
     // ==========================
-    // 🔧 CONFIGURACIÓN RÁPIDA
+    // CONFIGURACIÓN
     // ==========================
-    // 1) Carrusel: agrega o cambia imágenes aquí. Usa rutas locales (carpeta /assets) o URLs. AQUI SE TIENE QUE CAMBIAR LAS FOTOS QUE SE IRAN MOSTRANDO 
+    // Cambia aquí si quieres otros héroes (si no existen las imágenes, se usan placeholders)
     const CAROUSEL_IMAGES = [
       'modelo1.jpg',
       'modelo2.jpg',
       'modelo3.jpg'
     ];
-    const CAROUSEL_INTERVAL_MS = 4000; // tiempo entre cambios
+    const CAROUSEL_INTERVAL_MS = 4000;
 
-    // 2) Base de datos de productos (puedes reemplazarla con Google Sheets → CSV/JSON, ver notas más abajo)
-    // Campos mínimos: id, nombre, categoria, precio, imagenes[], tallas[], stockPorTalla{Talla:unidades}
-    const PRODUCTS = [
+    // URL CSV público de Google Sheets (tú lo publicaste como CSV). Ya puse el link que me diste:
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQA5cjti6B1RjNH6KVj-bap6xLoILJ91CONi5d6Ybj1R6T0etd44373NBhCxLYY-yqQPtepU1rWy0hd/pub?output=csv';
+
+    // Fallback: productos embebidos (se usan si la carga desde Google falla)
+    let PRODUCTS = [
       { id:'CG-001', nombre:'Playera Básica', categoria:'caballero', precio:199, imagenes:['assets/p1-1.jpg','assets/p1-2.jpg'], tallas:['S','M','L','XL'], stock:{'S':10,'M':8,'L':6,'XL':3}, promo:true },
       { id:'CG-002', nombre:'Blusa Casual', categoria:'dama', precio:249, imagenes:['assets/p2-1.jpg','assets/p2-2.jpg'], tallas:['XS','S','M','L'], stock:{'XS':4,'S':7,'M':5,'L':2}, promo:false },
       { id:'CG-003', nombre:'Conjunto Niño', categoria:'nino', precio:299, imagenes:['assets/p3-1.jpg'], tallas:['2','4','6','8'], stock:{'2':5,'4':6,'6':3,'8':2}, promo:true },
@@ -171,7 +171,6 @@
       { id:'CG-008', nombre:'Vestido Largo', categoria:'dama', precio:699, imagenes:['assets/p8.jpg'], tallas:['S','M','L'], stock:{'S':2,'M':3,'L':1}, promo:false }
     ];
 
-    // 3) Texto del banner inferior (puedes editar libremente)
     const BANNER_INFO = {
       titulo: 'Atención y envíos',
       lineas: [
@@ -183,7 +182,7 @@
     };
 
     // ==========================
-    // Utilidades
+    // UTILIDADES
     // ==========================
     const $ = s => document.querySelector(s);
     const app = $('#app');
@@ -195,21 +194,159 @@
       toast.textContent = msg; toast.classList.add('show');
       setTimeout(()=>toast.classList.remove('show'), 5000);
     }
-    function money(n){return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(n)}
+    function money(n){ return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(n) }
 
-    // LocalStorage Carrito
     function getCart(){ try{ return JSON.parse(localStorage.getItem('cg_cart')||'[]'); }catch(e){return []}}
     function setCart(items){ localStorage.setItem('cg_cart', JSON.stringify(items)); updateCartCount(); }
     function updateCartCount(){ const c = getCart().reduce((a,i)=>a+i.cantidad,0); const el=$('#cartCount'); el.textContent=c; el.style.display=c? 'inline-block':'none'; }
 
-    // Drawer
-    const drawer = $('#drawer');
-    $('#menuBtn').addEventListener('click', ()=>toggleDrawer(true));
-    function toggleDrawer(open){ drawer.classList.toggle('open', !!open) }
+    // Normaliza texto: quita acentos y ñ -> n para comparar categorías
+    function normalizeForCompare(s){
+      if(!s) return '';
+      return s.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ñ/g,'n').trim();
+    }
 
-    // Router simple
+    // ---------------- CSV PARSER (maneja comillas y comas internas)
+    function parseCSV(text){
+      const rows = [];
+      const lines = text.split(/\r?\n/);
+      for(let raw of lines){
+        if(raw.trim()==='') continue;
+        const values = [];
+        let cur=''; let inQuotes=false;
+        for(let i=0;i<raw.length;i++){
+          const ch = raw[i];
+          if(ch === '"'){
+            if(inQuotes && raw[i+1] === '"'){ cur += '"'; i++; } 
+            else { inQuotes = !inQuotes; }
+          } else if(ch === ',' && !inQuotes){
+            values.push(cur);
+            cur = '';
+          } else {
+            cur += ch;
+          }
+        }
+        values.push(cur);
+        rows.push(values);
+      }
+      return rows;
+    }
+
+    // ---------------- CARGAR PRODUCTS DESDE CSV (GOOGLE SHEETS PUBLICADO COMO CSV)
+    async function fetchProductsFromCSV(url){
+      try{
+        const res = await fetch(url);
+        if(!res.ok) throw new Error('CSV fetch failed '+res.status);
+        const txt = await res.text();
+        const rows = parseCSV(txt);
+        if(rows.length < 2) throw new Error('CSV vacío o sin filas');
+
+        const headers = rows[0].map(h => h.toString().toLowerCase().trim());
+        const mapped = [];
+        for(let i=1;i<rows.length;i++){
+          const row = rows[i];
+          if(row.every(c=>c==='')) continue;
+          const obj = {};
+          for(let j=0;j<headers.length;j++){
+            obj[headers[j]] = row[j] !== undefined ? row[j].trim() : '';
+          }
+          // Mapea a la estructura que usa el sitio
+          const p = {
+            id: obj.id || obj.sku || ('P-'+i),
+            nombre: obj.nombre || obj.title || '',
+            categoria: obj.categoria || obj.category || '',
+            precio: parseFloat((obj.precio||obj.price||'0').replace(/[^0-9.-]+/g,'')) || 0,
+            imagenes: [],
+            tallas: [],
+            stock: {},
+            promo: (obj.promo||'').toString().toLowerCase() === 'true'
+          };
+          // imagenes (separadas por | o comas)
+          if(obj.imagenes){
+            p.imagenes = obj.imagenes.split('|').map(x=>x.trim()).filter(Boolean);
+            if(p.imagenes.length===0) p.imagenes = obj.imagenes.split(',').map(x=>x.trim()).filter(Boolean);
+          }
+          // tallas
+          if(obj.tallas) p.tallas = obj.tallas.split('|').map(x=>x.trim()).filter(Boolean);
+          if(p.tallas.length===0 && obj.tallas) p.tallas = obj.tallas.split(',').map(x=>x.trim()).filter(Boolean);
+
+          // stock: puede ser JSON {"S":10} o formato S:10|M:5
+          if(obj.stock){
+            const s = obj.stock.trim();
+            try{
+              p.stock = JSON.parse(s);
+            }catch(e){
+              // parse S:10|M:5
+              const parts = s.split('|').map(x=>x.trim()).filter(Boolean);
+              parts.forEach(part=>{
+                const [k,v] = part.split(':').map(z=>z && z.trim());
+                if(k && v) p.stock[k] = parseInt(v)||0;
+              });
+            }
+          }
+
+          // fallback imagen si no hay
+          if(!p.imagenes || p.imagenes.length===0) p.imagenes = ['https://dummyimage.com/600x400/ddd/000&text=Sin+imagen'];
+
+          mapped.push(p);
+        }
+        if(mapped.length) {
+          // normalize category text
+          mapped.forEach(p=>{ p.categoria = normalizeForCompare(p.categoria); });
+          PRODUCTS = mapped;
+          console.log('Productos cargados desde CSV:', PRODUCTS.length);
+          return true;
+        } else {
+          throw new Error('No se parsearon productos del CSV');
+        }
+      }catch(err){
+        console.warn('No pude cargar CSV (se usará fallback):', err);
+        return false;
+      }
+    }
+
+    // ------------------ MENU / DRAWER (funciona con tu HTML existente)
+    const drawer = $('#drawer');
+    function toggleDrawer(open){
+      drawer.classList.toggle('open', !!open);
+    }
+    // abrir con botón
+    const menuBtn = document.getElementById('menuBtn');
+    if(menuBtn) menuBtn.addEventListener('click', ()=> toggleDrawer(true));
+    // cerrar al dar click en backdrop (ya tienes onclick inline, esto es extra seguro)
+    const backdrop = drawer.querySelector('.backdrop');
+    if(backdrop) backdrop.addEventListener('click', ()=> toggleDrawer(false));
+    // cerrar al hacer click en cualquiera de los enlaces dentro del panel
+    drawer.querySelectorAll('nav a').forEach(a => a.addEventListener('click', ()=> toggleDrawer(false)));
+
+    // Interceptar enlaces del topNav (para mantener tu HTML y usar el router SPA)
+    document.addEventListener('DOMContentLoaded', ()=>{
+      document.querySelectorAll('#topNav a').forEach(a=>{
+        a.addEventListener('click', (e)=>{
+          const href = a.getAttribute('href') || '';
+          // si es .html (tus enlaces originales) evitamos navegación y abrimos la ruta SPA equivalente
+          if(href.endsWith('.html')){
+            e.preventDefault();
+            const name = href.replace('.html','').toLowerCase();
+            // normalizar nombres especiales
+            let target = name;
+            if(name.includes('ni') || name.includes('niño') || name.includes('niño')) target = 'nino';
+            location.hash = `#/categoria/${target}`;
+          }
+        });
+      });
+    });
+
+    // ----------------- ROUTER & RENDERS (tu lógica original adaptada)
     window.addEventListener('hashchange', router);
-    window.addEventListener('load', ()=>{ updateCartCount(); router(); $('#year').textContent=new Date().getFullYear(); startCarousel(); });
+    window.addEventListener('load', async ()=>{
+      updateCartCount();
+      // intento cargar desde Google Sheets CSV; si falla, usa PRODUCTS fallback ya definido
+      await fetchProductsFromCSV(SHEET_CSV_URL);
+      router();
+      $('#year').textContent=new Date().getFullYear();
+      startCarousel();
+    });
 
     function router(){
       const h = location.hash.slice(1) || '/';
@@ -218,13 +355,11 @@
       if(route==='categoria') return renderCategory(a);
       if(route==='producto') return renderProduct(decodeURIComponent(a));
       if(route==='carrito') return renderCart();
-      if(route==='postpago') return renderPostPago();
+      if(route==='postpago' || route==='gracias') return renderPostPago();
       return renderNotFound();
     }
 
-    // ==========================
     // HOME
-    // ==========================
     function renderHome(){
       app.innerHTML = `
         <section class="bar"><span class="dot"></span> LO NUEVO</section>
@@ -244,31 +379,32 @@
       mountPromos();
     }
 
-    // Carrusel
+    // Carousel
     function mountCarousel(){
       const el = $('#carousel');
+      const imgs = CAROUSEL_IMAGES.length ? CAROUSEL_IMAGES : ['https://dummyimage.com/1200x340/ddd/000&text=CHELA+GASK'];
       el.innerHTML = `
-        <img id="carImg" alt="Carrusel" src="${CAROUSEL_IMAGES[state.idx % CAROUSEL_IMAGES.length]}">
-        <div class="dots">${CAROUSEL_IMAGES.map((_,i)=>`<span data-i="${i}" class="${i===state.idx?'active':''}"></span>`).join('')}</div>
+        <img id="carImg" alt="Carrusel" src="${imgs[state.idx % imgs.length]}">
+        <div class="dots">${imgs.map((_,i)=>`<span data-i="${i}" class="${i===state.idx?'active':''}"></span>`).join('')}</div>
       `;
     }
     function startCarousel(){
       setInterval(()=>{
-        state.idx = (state.idx + 1) % CAROUSEL_IMAGES.length;
-        const img = $('#carImg'); if(!img) return; img.src = CAROUSEL_IMAGES[state.idx];
+        const imgs = CAROUSEL_IMAGES.length ? CAROUSEL_IMAGES : ['https://dummyimage.com/1200x340/ddd/000&text=CHELA+GASK'];
+        state.idx = (state.idx + 1) % imgs.length;
+        const img = $('#carImg'); if(!img) return; img.src = imgs[state.idx];
         document.querySelectorAll('.carousel .dots span').forEach((d,i)=>{
           d.classList.toggle('active', i===state.idx)
         })
       }, CAROUSEL_INTERVAL_MS);
     }
 
-    // Destacados aleatorios (cambia al refrescar)
+    // Destacados
     function mountDestacados(){
       const cont = $('#destacados');
       const shuffled = [...PRODUCTS].sort(()=>Math.random()-0.5).slice(0,4);
       cont.innerHTML = shuffled.map(p=>cardHTML(p)).join('');
     }
-    // Promos: 3 aleatorias al refrescar
     function mountPromos(){
       const cont = $('#promos');
       const pool = PRODUCTS.filter(p=>p.promo);
@@ -280,7 +416,7 @@
       return `
       <article class="card">
         <a href="#/producto/${encodeURIComponent(p.id)}">
-          <img loading="lazy" src="${p.imagenes[0]||''}" alt="${p.nombre}">
+          <img loading="lazy" src="${p.imagenes && p.imagenes[0] ? p.imagenes[0] : 'https://dummyimage.com/600x400/ddd/000&text=Sin+imagen'}" alt="${p.nombre}">
         </a>
         <div class="meta">
           <div class="muted" style="font-size:.85rem;text-transform:uppercase">${p.categoria}</div>
@@ -301,12 +437,11 @@
       `;
     }
 
-    // ==========================
     // CATEGORÍA
-    // ==========================
     function renderCategory(cat){
-      if(!CATS.includes(cat)) return renderNotFound();
-      const items = PRODUCTS.filter(p=>p.categoria===cat);
+      const norm = normalizeForCompare(cat);
+      if(!CATS.includes(norm)) return renderNotFound();
+      const items = PRODUCTS.filter(p=> normalizeForCompare(p.categoria) === norm);
       app.innerHTML = `
         <section class="bar"><span class="dot"></span> ${cat.toUpperCase()}</section>
         <div class="grid cols-4">${items.map(cardHTML).join('')}</div>
@@ -314,13 +449,11 @@
       `;
     }
 
-    // ==========================
     // PRODUCTO
-    // ==========================
     function renderProduct(id){
       const p = PRODUCTS.find(x=>x.id===id);
       if(!p) return renderNotFound();
-      const tallaDefault = p.tallas[0];
+      const tallaDefault = (p.tallas && p.tallas[0]) || 'Única';
       app.innerHTML = `
         <div class="grid" style="grid-template-columns: 1.1fr .9fr; gap:24px">
           <div>
@@ -337,13 +470,13 @@
             <div class="price" style="font-size:1.4rem;margin:6px 0 14px 0">${money(p.precio)}</div>
             <div style="margin:12px 0">
               <label>Talla</label>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">${p.tallas.map(t=>`<button class="btn secondary talla" data-t="${t}">${t}</button>`).join('')}</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">${(p.tallas||['Única']).map(t=>`<button class="btn secondary talla" data-t="${t}">${t}</button>`).join('')}</div>
             </div>
             <div style="margin:12px 0">
               <label>Cantidad</label>
               <div class="qty"><button onclick="chgQty(-1)">−</button><span id="qty">1</span><button onclick="chgQty(1)">+</button></div>
             </div>
-            <div class="muted" id="stockMsg">Disponibles: ${p.stock[tallaDefault]||0}</div>
+            <div class="muted" id="stockMsg">Disponibles: ${(p.stock && p.stock[tallaDefault])?p.stock[tallaDefault]: (p.stock && Object.values(p.stock)[0]) || 0}</div>
             <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
               <button class="btn" id="addBtn">Agregar al carrito</button>
               <a class="btn secondary" href="#/carrito">Ver carrito</a>
@@ -382,14 +515,11 @@
       });
     }
 
-    // ==========================
     // CARRITO
-    // ==========================
     function renderCart(){
       const cart = getCart();
       const total = cart.reduce((a,i)=>a + i.precio * i.cantidad, 0);
       const lines = cart.map(i=>{
-        // mostrar cada pieza enlistada
         return Array.from({length:i.cantidad}, (_,k)=>`<div class="card" style="padding:10px;display:grid;grid-template-columns:90px 1fr auto;gap:10px">
           <img src="${i.imagen}" alt="${i.nombre}" style="height:80px;width:80px;object-fit:cover;border-radius:10px;border:1px solid var(--border)">
           <div>
@@ -473,25 +603,24 @@
         ${renderBanner()}
       `;
 
-      // Autollenado Estado por CP (primeros 2 dígitos → estado)
+      // Autollenado Estado por CP
       const CP_MAP = { '01':'Aguascalientes','02':'Baja California','03':'Baja California Sur','04':'Campeche','05':'Coahuila','06':'Colima','07':'Chiapas','08':'Chihuahua','09':'Ciudad de México','10':'Durango','11':'Guanajuato','12':'Guerrero','13':'Hidalgo','14':'Jalisco','15':'México','16':'Michoacán','17':'Morelos','18':'Nayarit','19':'Nuevo León','20':'Oaxaca','21':'Puebla','22':'Querétaro','23':'Quintana Roo','24':'San Luis Potosí','25':'Sinaloa','26':'Sonora','27':'Tabasco','28':'Tamaulipas','29':'Tlaxcala','30':'Veracruz','31':'Yucatán','32':'Zacatecas' };
       const cpInput = document.querySelector('input[name="cp"]');
-      cpInput.addEventListener('input', ()=>{
-        const v = cpInput.value.replace(/\D/g,''); if(v.length>=2){ $('#estadoAuto').value = CP_MAP[v.slice(0,2)] || ''; }
-      });
+      if(cpInput){
+        cpInput.addEventListener('input', ()=>{
+          const v = cpInput.value.replace(/\D/g,''); if(v.length>=2){ $('#estadoAuto').value = CP_MAP[v.slice(0,2)] || ''; }
+        });
+      }
 
       window.simularPago = function(tipo){
         const form = document.getElementById('envioForm');
         if(!form.checkValidity()){ $('#formError').style.display='block'; form.reportValidity(); return; }
         $('#formError').style.display='none';
         if(tipo==='ok'){
-          // En integración real: esperar confirmación del backend / webhook
           const datos = Object.fromEntries(new FormData(form).entries());
           const resumen = { items:getCart(), total: getCart().reduce((a,i)=>a+i.precio*i.cantidad,0), envio:datos };
           sessionStorage.setItem('cg_postpago', JSON.stringify(resumen));
-          // opcional: aquí podrías disparar un email via API (EmailJS/App Script)
           location.hash = '/postpago';
-          // Vaciar carrito
           setCart([]);
         } else if(tipo==='error') {
           showToast('PAGO ERROR: intenta nuevamente.');
@@ -501,15 +630,13 @@
       }
     }
 
-    // ==========================
     // POST-PAGO
-    // ==========================
     function renderPostPago(){
       const data = JSON.parse(sessionStorage.getItem('cg_postpago')||'null');
       if(!data){ app.innerHTML = '<p>Sin información de compra.</p>'; return; }
       const {items,total,envio} = data;
       const lines = items.map(i=>Array.from({length:i.cantidad},()=>`<div class="card" style="padding:10px;display:grid;grid-template-columns:90px 1fr auto;gap:10px">
-          <img src="${i.imagen}" alt="${i.nombre}" style="height:80px;width:80px;object-fit:cover;border-radius:10px;border:1px solid var(--border)">
+          <img src="${i.imagen||'https://dummyimage.com/80'}" alt="${i.nombre}" style="height:80px;width:80px;object-fit:cover;border-radius:10px;border:1px solid var(--border)">
           <div><div><strong>${i.nombre}</strong> <span class="muted">(${i.id})</span></div><div class="muted">Talla: ${i.talla}</div></div>
           <div style="text-align:right">${money(i.precio)}</div>
         </div>`).join('')).join('');
@@ -533,39 +660,6 @@
 
     function renderNotFound(){ app.innerHTML = '<p>Página no encontrada.</p>'; }
 
-    // ==========================
-    // 📌 Notas de implementación (lee y borra si gustas)
-    // ==========================
-    /*
-    ─────────────────────────────────────────────────────────────────────
-    1) Reemplazar "base de datos" por Google Sheets
-       - Crea una hoja con columnas: id, nombre, categoria, precio, imagenes (separadas por |), tallas (separadas por |), stock (JSON tipo {"S":10,"M":5}) y promo (true/false).
-       - En Google Sheets: Archivo → Publicar en la web → como CSV.
-       - Obtén la URL pública del CSV y haz fetch desde JS:
-           fetch('URL_DEL_CSV').then(r=>r.text()).then(csv=>{ /* parsea csv → PRODUCTS */ })
-       - O usa Apps Script para exponer un JSON bello y lo reemplazas en la constante PRODUCTS.
-
-    2) Mercado Pago en GitHub Pages (sin servidor)
-       - MP requiere crear una "preferencia" en backend para obtener el init_point. Puedes usar:
-         • Google Apps Script, Cloudflare Workers, Netlify Functions o Vercel Edge Functions.
-       - Flujo: cliente → tu función serverless crea preferencia (monto, ítems, back_urls) → devuelve init_point → rediriges al checkout MP.
-       - back_urls (success, pending, failure) deben regresar a: https://TU_USUARIO.github.io/tu-repo/#/postpago
-       - En la página de éxito (postpago) validas el pago consultando tu backend o Webhook (recomendado) y luego vacías el carrito.
-
-    3) Email de confirmación (estático)
-       - Usa EmailJS o Apps Script (doPost) para enviar el correo con el resumen (items + dirección).
-
-    4) Imágenes del carrusel y productos
-       - Ponlas en /assets y actualiza CAROUSEL_IMAGES y PRODUCTS.imagenes.
-
-    5) Subpáginas
-       - Ya están cubiertas por router: #/categoria/{caballero|dama|nino|accesorios|ropones|bisuteria}
-       - Producto individual: #/producto/{ID}
-       - Carrito: #/carrito
-
-    6) Estilos
-       - El diseño es limpio tipo "Nike". Ajusta colores en :root.
-    */
   </script>
 </body>
 </html>
