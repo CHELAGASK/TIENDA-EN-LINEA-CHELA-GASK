@@ -11,30 +11,6 @@
 html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans, "Apple Color Emoji","Segoe UI Emoji";}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
-
-    .side-menu {
-  position: fixed;
-  left: -250px;
-  top: 0;
-  width: 250px;
-  height: 100%;
-  background: #222;
-  color: #fff;
-  transition: left 0.3s ease;
-  padding: 20px;
-}
-
-.side-menu.open {
-  left: 0;
-}
-
-.side-menu a {
-  display: block;
-  color: white;
-  padding: 10px;
-  text-decoration: none;
-}
-
     
     /* Header */
     .header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);} 
@@ -169,14 +145,51 @@ img{max-width:100%;display:block}
   </footer>
 
   <script>
+      // Obtener elementos
+  const drawer = document.getElementById('drawer');
+  const menuBtn = document.getElementById('menuBtn');
+  const backdrop = drawer.querySelector('.backdrop');
+  const drawerLinks = drawer.querySelectorAll('nav a');
+
+  // Abrir/Cerrar al presionar el botón
+  menuBtn.addEventListener('click', () => {
+    drawer.classList.toggle('open');
+  });
+
+  // Cerrar al presionar el fondo (backdrop)
+  backdrop.addEventListener('click', () => {
+    drawer.classList.remove('open');
+  });
+
+  // Cerrar al presionar un enlace del menú
+  drawerLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      drawer.classList.remove('open');
+    });
+  });
+
+    <div id="drawer">
+  <div class="backdrop"></div>
+  <aside class="panel">
+    <nav>
+      <a href="#">Inicio</a>
+      <a href="#">Nosotros</a>
+      <a href="#">Contacto</a>
+    </nav>
+  </aside>
+</div>
+
+<button id="menuBtn">☰</button>
+
+    
     // ==========================
     // 🔧 CONFIGURACIÓN RÁPIDA
     // ==========================
-    // 1) Carrusel: agrega o cambia imágenes aquí. Usa rutas locales (carpeta /assets) o URLs.
+    // 1) Carrusel: agrega o cambia imágenes aquí. Usa rutas locales (carpeta /assets) o URLs. AQUI SE TIENE QUE CAMBIAR LAS FOTOS QUE SE IRAN MOSTRANDO 
     const CAROUSEL_IMAGES = [
-      'assets/hero1.jpg',
-      'assets/hero2.jpg',
-      'assets/hero3.jpg'
+      'modelo1.jpg',
+      'modelo2.jpg',
+      'modelo3.jpg'
     ];
     const CAROUSEL_INTERVAL_MS = 4000; // tiempo entre cambios
 
@@ -589,22 +602,5 @@ img{max-width:100%;display:block}
        - El diseño es limpio tipo "Nike". Ajusta colores en :root.
     */
   </script>
-  <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const menuBtn = document.querySelector(".menu-btn");
-  const sideMenu = document.querySelector(".side-menu");
-
-  menuBtn.addEventListener("click", () => {
-    sideMenu.classList.toggle("open");
-  });
-
-  // Cierra menú al hacer click en una opción
-  document.querySelectorAll(".side-menu a").forEach(link => {
-    link.addEventListener("click", () => {
-      sideMenu.classList.remove("open");
-    });
-  });
-});
-</script>
 </body>
 </html>
