@@ -565,5 +565,22 @@ img{max-width:100%;display:block}
        - El diseño es limpio tipo "Nike". Ajusta colores en :root.
     */
   </script>
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const menuBtn = document.querySelector(".menu-btn");
+  const sideMenu = document.querySelector(".side-menu");
+
+  menuBtn.addEventListener("click", () => {
+    sideMenu.classList.toggle("open");
+  });
+
+  // Cierra menú al hacer click en una opción
+  document.querySelectorAll(".side-menu a").forEach(link => {
+    link.addEventListener("click", () => {
+      sideMenu.classList.remove("open");
+    });
+  });
+});
+</script>
 </body>
 </html>
