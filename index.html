@@ -1,126 +1,178 @@
 <!DOCTYPE html>
-<html lang="es"> 
+<html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chela Gask | Tienda</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tienda en Línea Chela Gask</title>
   <style>
-    :root{
---bg:#ffffff;--text:#111;--muted:#666;--brand:#111;--accent:#ff3b30;--pill:#f4f4f4;--card:#fafafa;--border:#eaeaea;
-}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans, "Apple Color Emoji","Segoe UI Emoji";}
-a{color:inherit;text-decoration:none}
-img{max-width:100%;display:block}
-    
-    /* Header */
-    .header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);} 
-    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:12px 16px}
-    .logo{display:flex;align-items:center;gap:10px}
-    .logo img{height:28px;width:auto}
-    .brand{font-weight:700;letter-spacing:.3px}
-    .nav{display:flex;gap:20px;margin-left:28px}
-    .nav a{padding:8px 10px;border-radius:12px}
-    .nav a:hover{background:var(--pill)}
-    .spacer{flex:1}
-    .icon-btn{height:36px;width:36px;display:grid;place-items:center;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
-    .icon-btn:hover{background:var(--pill)}
-    .badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#fff;border-radius:999px;font-size:11px;padding:2px 6px}
-    .cart-wrap{position:relative}
-    /* Drawer */
-    .drawer{position:fixed;inset:0;pointer-events:none}
-    .drawer.open{pointer-events:auto}
-    .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.28);opacity:0;transition:.2s}
-    .drawer.open .backdrop{opacity:1}
-    .panel{position:absolute;left:0;top:0;height:100%;width:290px;background:#fff;transform:translateX(-100%);transition:.25s;border-right:1px solid var(--border);display:flex;flex-direction:column}
-    .drawer.open .panel{transform:translateX(0)}
-    .panel header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border)}
-    .panel nav a{display:block;padding:14px 16px;border-bottom:1px solid var(--border)}
+    /* ----------- RESET ----------- */
+    * {margin:0; padding:0; box-sizing:border-box;}
+    body {font-family: Arial, sans-serif; line-height:1.5; color:#333;}
+    a {text-decoration:none; color:inherit;}
+    img {max-width:100%; display:block;}
 
-    /* Sections */
-    .container{max-width:1200px;margin:0 auto;padding:10px 16px 40px}
-    .bar{display:flex;align-items:center;gap:10px;padding:12px 8px;font-weight:700}
-    .bar .dot{height:8px;width:8px;border-radius:999px;background:#000}
+    /* ----------- HEADER ----------- */
+    header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 20px;
+      background:#fff;
+      border-bottom:1px solid #ddd;
+      position:sticky; top:0; z-index:1000;
+    }
+    header img.logo {
+      height:40px;
+    }
+    .header-icons {
+      display:flex;
+      gap:15px;
+      align-items:center;
+    }
+    .icon-btn {
+      background:none;
+      border:none;
+      font-size:22px;
+      cursor:pointer;
+    }
 
-    /* Carousel */
-    .carousel{position:relative;border-radius:16px;overflow:hidden;background:var(--card);border:1px solid var(--border)}
-    .carousel img{width:100%;height:340px;object-fit:cover}
-    .carousel .dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px}
-    .carousel .dots span{height:8px;width:8px;border-radius:999px;background:#fff;opacity:.5;border:1px solid #000}
-    .carousel .dots span.active{opacity:1}
+    /* ----------- DRAWER ----------- */
+    .drawer {
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      display:none;
+      z-index:2000;
+    }
+    .drawer.active {display:block;}
+    .drawer .backdrop {
+      position:absolute; inset:0;
+      background:rgba(0,0,0,0.5);
+    }
+    .drawer .panel {
+      position:absolute;
+      top:0; left:0;
+      width:250px; height:100%;
+      background:#fff;
+      padding:20px;
+      box-shadow:2px 0 6px rgba(0,0,0,0.2);
+    }
+    .drawer nav a {
+      display:block;
+      padding:10px 0;
+      border-bottom:1px solid #eee;
+    }
 
-    /* Grids */
-    .grid{display:grid;gap:14px}
-    .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-    .grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
-    @media (max-width:960px){.grid.cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media (max-width:720px){.grid.cols-3{grid-template-columns:repeat(1,minmax(0,1fr))}}
+    /* ----------- CARRUSEL ----------- */
+    .carousel {
+      position:relative;
+      overflow:hidden;
+      height:300px;
+    }
+    .carousel img {
+      width:100%;
+      height:300px;
+      object-fit:cover;
+    }
+    .carousel .slides {
+      display:flex;
+      transition:transform 0.5s ease;
+    }
+    .carousel .controls {
+      position:absolute;
+      top:50%; left:0; right:0;
+      display:flex; justify-content:space-between;
+      transform:translateY(-50%);
+    }
+    .carousel button {
+      background:rgba(0,0,0,0.5);
+      color:#fff;
+      border:none;
+      padding:10px;
+      cursor:pointer;
+    }
 
-    .card{border:1px solid var(--border);border-radius:16px;background:#fff;overflow:hidden;display:flex;flex-direction:column}
-    .card .meta{padding:10px 12px}
-    .price{font-weight:700}
-    .muted{color:var(--muted)}
+    /* ----------- GRID DE PRODUCTOS ----------- */
+    .grid {
+      display:grid;
+      gap:20px;
+      padding:20px;
+    }
+    .card {
+      border:1px solid #ddd;
+      border-radius:8px;
+      overflow:hidden;
+      background:#fff;
+      box-shadow:0 2px 4px rgba(0,0,0,0.1);
+    }
+    .card img {height:200px; object-fit:cover;}
+    .card .info {padding:10px;}
+    .card h3 {font-size:16px; margin-bottom:5px;}
+    .card p {color:#555;}
 
-    /* Footer banner */
-    .banner{margin-top:24px;border:1px dashed var(--border);border-radius:16px;padding:18px;background:#f9fafb}
-    .banner h3{margin:0 0 8px 0}
-    .footer{margin-top:26px;padding:26px 16px;border-top:1px solid var(--border);color:#555}
+    /* ----------- RESPONSIVE ----------- */
+    @media(min-width:768px) {
+      .grid {grid-template-columns:repeat(2,1fr);}
+      .carousel {height:400px;}
+      .carousel img {height:400px;}
+    }
+    @media(min-width:1024px) {
+      .grid {grid-template-columns:repeat(4,1fr);}
+      .carousel {height:500px;}
+      .carousel img {height:500px;}
+    }
 
-    /* Toast */
-    .toast{position:fixed;right:16px;bottom:16px;background:#111;color:#fff;padding:12px 14px;border-radius:12px;opacity:0;transform:translateY(8px);transition:.25s;z-index:60}
-    .toast.show{opacity:1;transform:translateY(0)}
+    /* ----------- DETALLE PRODUCTO ----------- */
+    #producto-detalle {padding:20px;}
+    #producto-detalle img {border-radius:8px; margin-bottom:15px;}
+    .tallas {margin:15px 0;}
+    .tallas button {
+      margin-right:10px; padding:8px 15px;
+      border:1px solid #ddd; border-radius:5px;
+      cursor:pointer;
+    }
+    .tallas button:disabled {
+      background:#eee; cursor:not-allowed;
+    }
+    .acciones {margin-top:15px;}
+    .acciones button {
+      margin-right:10px;
+      padding:10px 15px;
+      border:none; border-radius:5px;
+      cursor:pointer;
+    }
+    .btn-carrito {background:#28a745; color:#fff;}
+    .btn-favorito {background:#ffc107; color:#000;}
 
-    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:#111;color:#fff;cursor:pointer}
-    .btn.secondary{background:#fff;color:#111}
-    .qty{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:12px}
-    .qty button{background:#fff;border:0;padding:8px 10px;cursor:pointer}
-    .qty span{width:38px;display:inline-grid;place-items:center}
-
-    .form{display:grid;gap:12px}
-    .form .row{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
-    @media (max-width:720px){.form .row{grid-template-columns:1fr}}
-    input,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);}
-    label{font-size:.9rem;color:#333}
-    .error{color:var(--accent);font-size:.9rem}
+    /* ----------- FOOTER ----------- */
+    footer {
+      margin-top:30px;
+      padding:20px;
+      text-align:center;
+      background:#f4f4f4;
+      border-top:1px solid #ddd;
+    }
   </style>
 </head>
 <body>
+
   <!-- HEADER -->
-  <header class="header">
-    <div class="header-inner">
-      <button id="menuBtn" class="icon-btn" aria-label="Menú">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-      </button>
-      <a href="#/" class="logo" title="Inicio">
-        <img src="logochelagask.jpg" alt="Logo Chela Gask" onerror="this.src='https://dummyimage.com/120x40/000/fff&text=CHELA+GASK'"/>
-        <span class="brand">Chela Gask</span>
-      </a>
-      <nav class="nav" id="topNav">
-        <!-- Subcategorías visibles tipo Nike (dejé el HTML idéntico) -->
-        <a href="caballero.html">Caballero</a>
-        <a href="dama.html">Dama</a>
-        <a href="niño.html">Niñ@</a>
-        <a href="accesorios.html">Accesorios</a>
-        <a href="ropones.html">Ropones</a>
-        <a href="bisuteria.html">Bisutería</a>
-      </nav>
-      <div class="spacer"></div>
-      <a class="icon-btn" href="favoritos.html" aria-label="Favoritos" title="Favoritos">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-      </a>
-      <a class="icon-btn cart-wrap" href="carrito.html" aria-label="Carrito" title="Carrito">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 12.39A2 2 0 0 0 9.62 15h8.76a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        <span id="cartCount" class="badge" style="display:none">0</span>
-      </a>
+  <header>
+    <button class="icon-btn" onclick="toggleDrawer(true)">☰</button>
+    <img src="logochelagask.jpg" alt="Logo Chela Gask" class="logo">
+    <div class="header-icons">
+      <a href="#/favoritos">⭐</a>
+      <a href="#/carrito">🛒<span id="cart-count"></span></a>
     </div>
   </header>
 
   <!-- DRAWER -->
   <div id="drawer" class="drawer">
     <div class="backdrop" onclick="toggleDrawer(false)"></div>
-    <aside class="panel" role="dialog" aria-label="Menú lateral">
+    <aside class="panel">
       <header>
         <strong>Menú</strong>
-        <button class="icon-btn" onclick="toggleDrawer(false)" aria-label="Cerrar">✕</button>
+        <button class="icon-btn" onclick="toggleDrawer(false)">✕</button>
       </header>
       <nav>
         <a href="#/" onclick="toggleDrawer(false)">Inicio</a>
@@ -130,536 +182,160 @@ img{max-width:100%;display:block}
         <a href="#/categoria/accesorios" onclick="toggleDrawer(false)">Accesorios</a>
         <a href="#/categoria/ropones" onclick="toggleDrawer(false)">Ropones</a>
         <a href="#/categoria/bisuteria" onclick="toggleDrawer(false)">Bisutería</a>
+        <a href="#/favoritos" onclick="toggleDrawer(false)">Favoritos</a>
         <a href="#/carrito" onclick="toggleDrawer(false)">Carrito</a>
       </nav>
     </aside>
   </div>
 
-  <!-- MAIN RENDER -->
-  <main id="app" class="container"></main>
+  <!-- MAIN CONTENT -->
+  <main id="app">
+    <!-- Carrusel -->
+    <div class="carousel">
+      <div class="slides" id="slides">
+        <img src="https://via.placeholder.com/1200x500?text=Promo+1" alt="">
+        <img src="https://via.placeholder.com/1200x500?text=Promo+2" alt="">
+        <img src="https://via.placeholder.com/1200x500?text=Promo+3" alt="">
+      </div>
+      <div class="controls">
+        <button onclick="prevSlide()">‹</button>
+        <button onclick="nextSlide()">›</button>
+      </div>
+    </div>
 
-  <div id="toast" class="toast"></div>
+    <!-- Grid de productos destacados -->
+    <section>
+      <h2 style="padding:20px 20px 0;">Artículos Destacados</h2>
+      <div class="grid" id="destacados"></div>
+    </section>
 
-  <footer class="footer">
-    © <span id="year"></span> Chela Gask. Todos los derechos reservados.
+    <!-- Promociones -->
+    <section>
+      <h2 style="padding:20px 20px 0;">Promociones</h2>
+      <div class="grid" id="promociones"></div>
+      <h2 style="padding:20px 20px 0;">Más Artículos Destacados</h2>
+      <div class="grid" id="destacados2"></div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2024 Chela Gask - Todos los derechos reservados</p>
   </footer>
 
+  <!-- SCRIPT -->
   <script>
-    // ==========================
-    // CONFIGURACIÓN
-    // ==========================
-    // Cambia aquí si quieres otros héroes (si no existen las imágenes, se usan placeholders)
-    const CAROUSEL_IMAGES = [
-      'modelo1.jpg',
-      'modelo2.jpg',
-      'modelo3.jpg'
-    ];
-    const CAROUSEL_INTERVAL_MS = 4000;
-
-    // URL CSV público de Google Sheets (tú lo publicaste como CSV). Ya puse el link que me diste:
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQA5cjti6B1RjNH6KVj-bap6xLoILJ91CONi5d6Ybj1R6T0etd44373NBhCxLYY-yqQPtepU1rWy0hd/pub?output=csv';
-
-    // Fallback: productos embebidos (se usan si la carga desde Google falla)
-    let PRODUCTS = [
-      { id:'CG-001', nombre:'Playera Básica', categoria:'caballero', precio:199, imagenes:['assets/p1-1.jpg','assets/p1-2.jpg'], tallas:['S','M','L','XL'], stock:{'S':10,'M':8,'L':6,'XL':3}, promo:true },
-      { id:'CG-002', nombre:'Blusa Casual', categoria:'dama', precio:249, imagenes:['assets/p2-1.jpg','assets/p2-2.jpg'], tallas:['XS','S','M','L'], stock:{'XS':4,'S':7,'M':5,'L':2}, promo:false },
-      { id:'CG-003', nombre:'Conjunto Niño', categoria:'nino', precio:299, imagenes:['assets/p3-1.jpg'], tallas:['2','4','6','8'], stock:{'2':5,'4':6,'6':3,'8':2}, promo:true },
-      { id:'CG-004', nombre:'Ropón Ceremonia', categoria:'ropones', precio:899, imagenes:['assets/p4.jpg'], tallas:['Única'], stock:{'Única':5}, promo:true },
-      { id:'CG-005', nombre:'Collar Acero', categoria:'bisuteria', precio:149, imagenes:['assets/p5.jpg'], tallas:['Única'], stock:{'Única':20}, promo:false },
-      { id:'CG-006', nombre:'Gorra Logo', categoria:'accesorios', precio:179, imagenes:['assets/p6.jpg'], tallas:['Única'], stock:{'Única':12}, promo:false },
-      { id:'CG-007', nombre:'Sudadera Unisex', categoria:'caballero', precio:499, imagenes:['assets/p7.jpg'], tallas:['S','M','L'], stock:{'S':5,'M':5,'L':5}, promo:true },
-      { id:'CG-008', nombre:'Vestido Largo', categoria:'dama', precio:699, imagenes:['assets/p8.jpg'], tallas:['S','M','L'], stock:{'S':2,'M':3,'L':1}, promo:false }
-    ];
-
-    const BANNER_INFO = {
-      titulo: 'Atención y envíos',
-      lineas: [
-        'Envíos a todo México. Tiempo estimado 2–5 días hábiles.',
-        'Cambios y devoluciones dentro de los 7 días con ticket.',
-        'WhatsApp de atención: 44xx xxx xxx (10:00–19:00).',
-        'Promos y novedades en Instagram: @chelagask.'
-      ]
-    };
-
-    // ==========================
-    // UTILIDADES
-    // ==========================
-    const $ = s => document.querySelector(s);
-    const app = $('#app');
-    const toast = $('#toast');
-    const state = { idx:0 };
-    const CATS = ['caballero','dama','nino','accesorios','ropones','bisuteria'];
-
-    function showToast(msg){
-      toast.textContent = msg; toast.classList.add('show');
-      setTimeout(()=>toast.classList.remove('show'), 5000);
-    }
-    function money(n){ return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(n) }
-
-    function getCart(){ try{ return JSON.parse(localStorage.getItem('cg_cart')||'[]'); }catch(e){return []}}
-    function setCart(items){ localStorage.setItem('cg_cart', JSON.stringify(items)); updateCartCount(); }
-    function updateCartCount(){ const c = getCart().reduce((a,i)=>a+i.cantidad,0); const el=$('#cartCount'); el.textContent=c; el.style.display=c? 'inline-block':'none'; }
-
-    // Normaliza texto: quita acentos y ñ -> n para comparar categorías
-    function normalizeForCompare(s){
-      if(!s) return '';
-      return s.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ñ/g,'n').trim();
-    }
-
-    // ---------------- CSV PARSER (maneja comillas y comas internas)
-    function parseCSV(text){
-      const rows = [];
-      const lines = text.split(/\r?\n/);
-      for(let raw of lines){
-        if(raw.trim()==='') continue;
-        const values = [];
-        let cur=''; let inQuotes=false;
-        for(let i=0;i<raw.length;i++){
-          const ch = raw[i];
-          if(ch === '"'){
-            if(inQuotes && raw[i+1] === '"'){ cur += '"'; i++; } 
-            else { inQuotes = !inQuotes; }
-          } else if(ch === ',' && !inQuotes){
-            values.push(cur);
-            cur = '';
-          } else {
-            cur += ch;
-          }
-        }
-        values.push(cur);
-        rows.push(values);
-      }
-      return rows;
-    }
-
-    // ---------------- CARGAR PRODUCTS DESDE CSV (GOOGLE SHEETS PUBLICADO COMO CSV)
-    async function fetchProductsFromCSV(url){
-      try{
-        const res = await fetch(url);
-        if(!res.ok) throw new Error('CSV fetch failed '+res.status);
-        const txt = await res.text();
-        const rows = parseCSV(txt);
-        if(rows.length < 2) throw new Error('CSV vacío o sin filas');
-
-        const headers = rows[0].map(h => h.toString().toLowerCase().trim());
-        const mapped = [];
-        for(let i=1;i<rows.length;i++){
-          const row = rows[i];
-          if(row.every(c=>c==='')) continue;
-          const obj = {};
-          for(let j=0;j<headers.length;j++){
-            obj[headers[j]] = row[j] !== undefined ? row[j].trim() : '';
-          }
-          // Mapea a la estructura que usa el sitio
-          const p = {
-            id: obj.id || obj.sku || ('P-'+i),
-            nombre: obj.nombre || obj.title || '',
-            categoria: obj.categoria || obj.category || '',
-            precio: parseFloat((obj.precio||obj.price||'0').replace(/[^0-9.-]+/g,'')) || 0,
-            imagenes: [],
-            tallas: [],
-            stock: {},
-            promo: (obj.promo||'').toString().toLowerCase() === 'true'
-          };
-          // imagenes (separadas por | o comas)
-          if(obj.imagenes){
-            p.imagenes = obj.imagenes.split('|').map(x=>x.trim()).filter(Boolean);
-            if(p.imagenes.length===0) p.imagenes = obj.imagenes.split(',').map(x=>x.trim()).filter(Boolean);
-          }
-          // tallas
-          if(obj.tallas) p.tallas = obj.tallas.split('|').map(x=>x.trim()).filter(Boolean);
-          if(p.tallas.length===0 && obj.tallas) p.tallas = obj.tallas.split(',').map(x=>x.trim()).filter(Boolean);
-
-          // stock: puede ser JSON {"S":10} o formato S:10|M:5
-          if(obj.stock){
-            const s = obj.stock.trim();
-            try{
-              p.stock = JSON.parse(s);
-            }catch(e){
-              // parse S:10|M:5
-              const parts = s.split('|').map(x=>x.trim()).filter(Boolean);
-              parts.forEach(part=>{
-                const [k,v] = part.split(':').map(z=>z && z.trim());
-                if(k && v) p.stock[k] = parseInt(v)||0;
-              });
-            }
-          }
-
-          // fallback imagen si no hay
-          if(!p.imagenes || p.imagenes.length===0) p.imagenes = ['https://dummyimage.com/600x400/ddd/000&text=Sin+imagen'];
-
-          mapped.push(p);
-        }
-        if(mapped.length) {
-          // normalize category text
-          mapped.forEach(p=>{ p.categoria = normalizeForCompare(p.categoria); });
-          PRODUCTS = mapped;
-          console.log('Productos cargados desde CSV:', PRODUCTS.length);
-          return true;
-        } else {
-          throw new Error('No se parsearon productos del CSV');
-        }
-      }catch(err){
-        console.warn('No pude cargar CSV (se usará fallback):', err);
-        return false;
-      }
-    }
-
-    // ------------------ MENU / DRAWER (funciona con tu HTML existente)
-    const drawer = $('#drawer');
+    /* ----------- DRAWER ----------- */
     function toggleDrawer(open){
-      drawer.classList.toggle('open', !!open);
+      document.getElementById("drawer").classList.toggle("active", open);
     }
-    // abrir con botón
-    const menuBtn = document.getElementById('menuBtn');
-    if(menuBtn) menuBtn.addEventListener('click', ()=> toggleDrawer(true));
-    // cerrar al dar click en backdrop (ya tienes onclick inline, esto es extra seguro)
-    const backdrop = drawer.querySelector('.backdrop');
-    if(backdrop) backdrop.addEventListener('click', ()=> toggleDrawer(false));
-    // cerrar al hacer click en cualquiera de los enlaces dentro del panel
-    drawer.querySelectorAll('nav a').forEach(a => a.addEventListener('click', ()=> toggleDrawer(false)));
 
-    // Interceptar enlaces del topNav (para mantener tu HTML y usar el router SPA)
-    document.addEventListener('DOMContentLoaded', ()=>{
-      document.querySelectorAll('#topNav a').forEach(a=>{
-        a.addEventListener('click', (e)=>{
-          const href = a.getAttribute('href') || '';
-          // si es .html (tus enlaces originales) evitamos navegación y abrimos la ruta SPA equivalente
-          if(href.endsWith('.html')){
-            e.preventDefault();
-            const name = href.replace('.html','').toLowerCase();
-            // normalizar nombres especiales
-            let target = name;
-            if(name.includes('ni') || name.includes('niño') || name.includes('niño')) target = 'nino';
-            location.hash = `#/categoria/${target}`;
-          }
-        });
+    /* ----------- CARRUSEL ----------- */
+    let currentSlide=0;
+    const slides=document.getElementById("slides");
+    function showSlide(index){
+      const total=slides.children.length;
+      currentSlide=(index+total)%total;
+      slides.style.transform=`translateX(${-currentSlide*100}%)`;
+    }
+    function nextSlide(){showSlide(currentSlide+1);}
+    function prevSlide(){showSlide(currentSlide-1);}
+    setInterval(nextSlide,5000);
+
+    /* ----------- DATOS DEMO (reemplazar con Google Sheets si quieres) ----------- */
+    const productos=[
+      {id:1,nombre:"Camisa Caballero",precio:350,img:"https://via.placeholder.com/400x400?text=Caballero+1",stock:{CH:3,M:2,G:0,EG:1}},
+      {id:2,nombre:"Vestido Dama",precio:500,img:"https://via.placeholder.com/400x400?text=Dama+1",stock:{CH:0,M:2,G:2,EG:0}},
+      {id:3,nombre:"Playera Niño",precio:200,img:"https://via.placeholder.com/400x400?text=Niño+1",stock:{CH:1,M:0,G:0,EG:0}},
+      {id:4,nombre:"Collar Bisutería",precio:150,img:"https://via.placeholder.com/400x400?text=Bisuteria+1",stock:{CH:0,M:0,G:0,EG:0}}
+    ];
+
+    /* Renderizar productos destacados */
+    function renderDestacados(){
+      const cont=document.getElementById("destacados");
+      cont.innerHTML="";
+      productos.forEach(p=>{
+        cont.innerHTML+=`
+          <div class="card">
+            <img src="${p.img}" alt="${p.nombre}">
+            <div class="info">
+              <h3>${p.nombre}</h3>
+              <p>$${p.precio}</p>
+              <a href="#/producto/${p.id}">Ver producto</a>
+            </div>
+          </div>`;
       });
-    });
-
-    // ----------------- ROUTER & RENDERS (tu lógica original adaptada)
-    window.addEventListener('hashchange', router);
-    window.addEventListener('load', async ()=>{
-      updateCartCount();
-      // intento cargar desde Google Sheets CSV; si falla, usa PRODUCTS fallback ya definido
-      await fetchProductsFromCSV(SHEET_CSV_URL);
-      router();
-      $('#year').textContent=new Date().getFullYear();
-      startCarousel();
-    });
-
-    function router(){
-      const h = location.hash.slice(1) || '/';
-      const [_, route, a, b] = h.split('/');
-      if(h === '/' || route==='') return renderHome();
-      if(route==='categoria') return renderCategory(a);
-      if(route==='producto') return renderProduct(decodeURIComponent(a));
-      if(route==='carrito') return renderCart();
-      if(route==='postpago' || route==='gracias') return renderPostPago();
-      return renderNotFound();
+      document.getElementById("destacados2").innerHTML=cont.innerHTML;
+      document.getElementById("promociones").innerHTML=cont.innerHTML;
     }
+    renderDestacados();
 
-    // HOME
-    function renderHome(){
-      app.innerHTML = `
-        <section class="bar"><span class="dot"></span> LO NUEVO</section>
-        <section class="carousel" id="carousel"></section>
-        <section style="margin-top:18px">
-          <h3>Artículos destacados</h3>
-          <div class="grid cols-4" id="destacados"></div>
-        </section>
-        <section style="margin-top:10px" class="bar"><span class="dot"></span> PROMOCIONES</section>
-        <section>
-          <div class="grid cols-3" id="promos"></div>
-        </section>
-        ${renderBanner()}
-      `;
-      mountCarousel();
-      mountDestacados();
-      mountPromos();
-    }
-
-    // Carousel
-    function mountCarousel(){
-      const el = $('#carousel');
-      const imgs = CAROUSEL_IMAGES.length ? CAROUSEL_IMAGES : ['https://dummyimage.com/1200x340/ddd/000&text=CHELA+GASK'];
-      el.innerHTML = `
-        <img id="carImg" alt="Carrusel" src="${imgs[state.idx % imgs.length]}">
-        <div class="dots">${imgs.map((_,i)=>`<span data-i="${i}" class="${i===state.idx?'active':''}"></span>`).join('')}</div>
-      `;
-    }
-    function startCarousel(){
-      setInterval(()=>{
-        const imgs = CAROUSEL_IMAGES.length ? CAROUSEL_IMAGES : ['https://dummyimage.com/1200x340/ddd/000&text=CHELA+GASK'];
-        state.idx = (state.idx + 1) % imgs.length;
-        const img = $('#carImg'); if(!img) return; img.src = imgs[state.idx];
-        document.querySelectorAll('.carousel .dots span').forEach((d,i)=>{
-          d.classList.toggle('active', i===state.idx)
-        })
-      }, CAROUSEL_INTERVAL_MS);
-    }
-
-    // Destacados
-    function mountDestacados(){
-      const cont = $('#destacados');
-      const shuffled = [...PRODUCTS].sort(()=>Math.random()-0.5).slice(0,4);
-      cont.innerHTML = shuffled.map(p=>cardHTML(p)).join('');
-    }
-    function mountPromos(){
-      const cont = $('#promos');
-      const pool = PRODUCTS.filter(p=>p.promo);
-      const pick = (pool.length>=3? pool.sort(()=>Math.random()-0.5).slice(0,3) : pool);
-      cont.innerHTML = pick.map(p=>cardHTML(p)).join('');
-    }
-
-    function cardHTML(p){
-      return `
-      <article class="card">
-        <a href="#/producto/${encodeURIComponent(p.id)}">
-          <img loading="lazy" src="${p.imagenes && p.imagenes[0] ? p.imagenes[0] : 'https://dummyimage.com/600x400/ddd/000&text=Sin+imagen'}" alt="${p.nombre}">
-        </a>
-        <div class="meta">
-          <div class="muted" style="font-size:.85rem;text-transform:uppercase">${p.categoria}</div>
-          <a href="#/producto/${encodeURIComponent(p.id)}"><strong>${p.nombre}</strong></a>
-          <div class="price">${money(p.precio)}</div>
-        </div>
-      </article>`
-    }
-
-    function renderBanner(){
-      return `
-        <section class="banner">
-          <h3>${BANNER_INFO.titulo}</h3>
-          <ul style="margin:0;padding-left:18px;color:#333">
-            ${BANNER_INFO.lineas.map(x=>`<li>${x}</li>`).join('')}
-          </ul>
-        </section>
-      `;
-    }
-
-    // CATEGORÍA
-    function renderCategory(cat){
-      const norm = normalizeForCompare(cat);
-      if(!CATS.includes(norm)) return renderNotFound();
-      const items = PRODUCTS.filter(p=> normalizeForCompare(p.categoria) === norm);
-      app.innerHTML = `
-        <section class="bar"><span class="dot"></span> ${cat.toUpperCase()}</section>
-        <div class="grid cols-4">${items.map(cardHTML).join('')}</div>
-        ${renderBanner()}
-      `;
-    }
-
-    // PRODUCTO
-    function renderProduct(id){
-      const p = PRODUCTS.find(x=>x.id===id);
-      if(!p) return renderNotFound();
-      const tallaDefault = (p.tallas && p.tallas[0]) || 'Única';
-      app.innerHTML = `
-        <div class="grid" style="grid-template-columns: 1.1fr .9fr; gap:24px">
-          <div>
-            <div id="gal" class="grid" style="grid-template-columns:repeat(5, minmax(0,1fr)); gap:10px; margin-bottom:10px">
-              ${p.imagenes.map((src,i)=>`<img class="thumb" data-i="${i}" style="border:1px solid var(--border);border-radius:10px;cursor:pointer" src="${src}" alt="${p.nombre} ${i+1}">`).join('')}
-            </div>
-            <div style="border:1px solid var(--border);border-radius:16px;overflow:hidden">
-              <img id="mainImg" src="${p.imagenes[0]}" alt="${p.nombre}" style="width:100%;max-height:520px;object-fit:cover">
-            </div>
-          </div>
-          <div>
-            <h1 style="margin:0 0 8px 0">${p.nombre}</h1>
-            <div class="muted">Modelo: ${p.id}</div>
-            <div class="price" style="font-size:1.4rem;margin:6px 0 14px 0">${money(p.precio)}</div>
-            <div style="margin:12px 0">
-              <label>Talla</label>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">${(p.tallas||['Única']).map(t=>`<button class="btn secondary talla" data-t="${t}">${t}</button>`).join('')}</div>
-            </div>
-            <div style="margin:12px 0">
-              <label>Cantidad</label>
-              <div class="qty"><button onclick="chgQty(-1)">−</button><span id="qty">1</span><button onclick="chgQty(1)">+</button></div>
-            </div>
-            <div class="muted" id="stockMsg">Disponibles: ${(p.stock && p.stock[tallaDefault])?p.stock[tallaDefault]: (p.stock && Object.values(p.stock)[0]) || 0}</div>
-            <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn" id="addBtn">Agregar al carrito</button>
-              <a class="btn secondary" href="#/carrito">Ver carrito</a>
-            </div>
-          </div>
-        </div>
-      `;
-
-      // Galería
-      document.querySelectorAll('.thumb').forEach(th=>{
-        th.addEventListener('click', ()=>{ $('#mainImg').src = th.src; });
-      });
-
-      // Tallas
-      let tallaSel = tallaDefault; markTalla();
-      document.querySelectorAll('.talla').forEach(b=>{
-        b.addEventListener('click', ()=>{ tallaSel = b.dataset.t; markTalla(); $('#stockMsg').textContent = 'Disponibles: '+(p.stock[tallaSel]||0); });
-      });
-      function markTalla(){
-        document.querySelectorAll('.talla').forEach(x=>x.style.borderColor='var(--border)');
-        const btn = document.querySelector(`.talla[data-t="${tallaSel}"]`); if(btn) btn.style.borderColor='#111';
-      }
-
-      // Cantidad
-      window.chgQty = function(d){ const el=$('#qty'); let v=+el.textContent; v=Math.max(1, v+d); el.textContent=v };
-
-      // Agregar al carrito
-      $('#addBtn').addEventListener('click', ()=>{
-        const cantidad = +$('#qty').textContent;
-        const stock = p.stock[tallaSel]||0;
-        if(cantidad>stock){ showToast('No hay suficientes piezas en stock para esa talla.'); return; }
-        const cart = getCart();
-        cart.push({ id:p.id, nombre:p.nombre, precio:p.precio, talla:tallaSel, cantidad, imagen:p.imagenes[0] });
-        setCart(cart);
-        showToast('Se agregó al carrito.');
-      });
-    }
-
-    // CARRITO
-    function renderCart(){
-      const cart = getCart();
-      const total = cart.reduce((a,i)=>a + i.precio * i.cantidad, 0);
-      const lines = cart.map(i=>{
-        return Array.from({length:i.cantidad}, (_,k)=>`<div class="card" style="padding:10px;display:grid;grid-template-columns:90px 1fr auto;gap:10px">
-          <img src="${i.imagen}" alt="${i.nombre}" style="height:80px;width:80px;object-fit:cover;border-radius:10px;border:1px solid var(--border)">
-          <div>
-            <div><strong>${i.nombre}</strong> <span class="muted">(${i.id})</span></div>
-            <div class="muted">Talla: ${i.talla}</div>
-          </div>
-          <div style="text-align:right">${money(i.precio)}</div>
-        </div>`).join('')
-      }).join('');
-
-      app.innerHTML = `
-        <section class="bar"><span class="dot"></span> CONFIRMACIÓN DE COMPRA</section>
-        <div class="grid" style="grid-template-columns: 1.1fr .9fr; gap:20px">
-          <div>
-            ${cart.length? lines : '<p class="muted">Tu carrito está vacío.</p>'}
-            <div style="text-align:right;margin-top:10px"><strong>TOTAL: ${money(total)}</strong></div>
-
-            <section class="banner" style="margin-top:16px">
-              <h3>Datos de envío a domicilio</h3>
-              <form id="envioForm" class="form">
-                <div class="row">
-                  <div>
-                    <label>Nombre</label>
-                    <input required name="nombre" />
-                  </div>
-                  <div>
-                    <label>Apellidos</label>
-                    <input required name="apellidos" />
-                  </div>
-                </div>
-                <div class="row">
-                  <div>
-                    <label>Código Postal (CP)</label>
-                    <input required name="cp" pattern="\\d{5}" placeholder="5 dígitos" />
-                  </div>
-                  <div>
-                    <label>Estado (auto)</label>
-                    <input required name="estado" id="estadoAuto" readonly />
-                  </div>
-                </div>
-                <div class="row">
-                  <div>
-                    <label>Calle</label>
-                    <input required name="calle" />
-                  </div>
-                  <div>
-                    <label>Número</label>
-                    <input required name="numero" />
-                  </div>
-                </div>
-                <div class="row">
-                  <div>
-                    <label>Número interior (opcional)</label>
-                    <input name="interior" />
-                  </div>
-                  <div>
-                    <label>Correo</label>
-                    <input required type="email" name="correo" />
-                  </div>
-                </div>
-                <div>
-                  <label>Teléfono</label>
-                  <input required name="telefono" pattern="[0-9\s+()-]{8,}" />
-                </div>
-                <div class="error" id="formError" style="display:none">Completa todos los campos obligatorios.</div>
-              </form>
-            </section>
-          </div>
-          <div>
-            <div class="card" style="padding:14px">
-              <h3 style="margin:4px 0 12px 0">Pago</h3>
-              <p class="muted" style="margin-top:0">Integración real con Mercado Pago requiere un pequeño backend (ver comentarios en el código). Abajo tienes un simulador de flujo:</p>
-              <div style="display:flex;flex-direction:column;gap:10px">
-                <button class="btn" onclick="simularPago('ok')">Pagar (Simular OK)</button>
-                <button class="btn secondary" onclick="simularPago('error')">Simular ERROR</button>
-                <button class="btn secondary" onclick="simularPago('insuficiente')">Simular FONDOS INSUFICIENTES</button>
+    /* ----------- ROUTER SIMPLE ----------- */
+    window.addEventListener("hashchange",navegar);
+    function navegar(){
+      const hash=window.location.hash;
+      const app=document.getElementById("app");
+      if(hash.startsWith("#/producto/")){
+        const id=parseInt(hash.split("/")[2]);
+        const p=productos.find(x=>x.id===id);
+        if(p){
+          app.innerHTML=`
+            <div id="producto-detalle">
+              <h2>${p.nombre}</h2>
+              <img src="${p.img}" alt="${p.nombre}">
+              <p>Precio: $${p.precio}</p>
+              <div class="tallas">
+                <strong>Tallas:</strong><br>
+                ${Object.keys(p.stock).map(t=>
+                  `<button ${p.stock[t]<=0?"disabled":""} onclick="seleccionarTalla('${t}')">${t}</button>`
+                ).join("")}
+              </div>
+              <div class="acciones">
+                <button class="btn-carrito" onclick="agregarCarrito(${p.id})">Agregar al Carrito</button>
+                <button class="btn-favorito" onclick="agregarFavorito(${p.id})">⭐ Favorito</button>
               </div>
             </div>
-          </div>
-        </div>
-        ${renderBanner()}
-      `;
-
-      // Autollenado Estado por CP
-      const CP_MAP = { '01':'Aguascalientes','02':'Baja California','03':'Baja California Sur','04':'Campeche','05':'Coahuila','06':'Colima','07':'Chiapas','08':'Chihuahua','09':'Ciudad de México','10':'Durango','11':'Guanajuato','12':'Guerrero','13':'Hidalgo','14':'Jalisco','15':'México','16':'Michoacán','17':'Morelos','18':'Nayarit','19':'Nuevo León','20':'Oaxaca','21':'Puebla','22':'Querétaro','23':'Quintana Roo','24':'San Luis Potosí','25':'Sinaloa','26':'Sonora','27':'Tabasco','28':'Tamaulipas','29':'Tlaxcala','30':'Veracruz','31':'Yucatán','32':'Zacatecas' };
-      const cpInput = document.querySelector('input[name="cp"]');
-      if(cpInput){
-        cpInput.addEventListener('input', ()=>{
-          const v = cpInput.value.replace(/\D/g,''); if(v.length>=2){ $('#estadoAuto').value = CP_MAP[v.slice(0,2)] || ''; }
-        });
-      }
-
-      window.simularPago = function(tipo){
-        const form = document.getElementById('envioForm');
-        if(!form.checkValidity()){ $('#formError').style.display='block'; form.reportValidity(); return; }
-        $('#formError').style.display='none';
-        if(tipo==='ok'){
-          const datos = Object.fromEntries(new FormData(form).entries());
-          const resumen = { items:getCart(), total: getCart().reduce((a,i)=>a+i.precio*i.cantidad,0), envio:datos };
-          sessionStorage.setItem('cg_postpago', JSON.stringify(resumen));
-          location.hash = '/postpago';
-          setCart([]);
-        } else if(tipo==='error') {
-          showToast('PAGO ERROR: intenta nuevamente.');
-        } else {
-          showToast('Fondos insuficientes: intenta con otro método.');
+            <h3 style="padding:20px;">También te puede interesar:</h3>
+            <div class="grid">${productos.filter(x=>x.id!==p.id).map(o=>
+              `<div class="card"><img src="${o.img}"><div class="info"><h3>${o.nombre}</h3><p>$${o.precio}</p><a href="#/producto/${o.id}">Ver producto</a></div></div>`
+            ).join("")}</div>
+          `;
         }
+      } else if(hash==="#/favoritos"){
+        const favoritos=JSON.parse(localStorage.getItem("favoritos"))||[];
+        app.innerHTML="<h2 style='padding:20px;'>Mis Favoritos</h2><div class='grid'>"+
+          productos.filter(p=>favoritos.includes(p.id)).map(p=>
+            `<div class="card"><img src="${p.img}"><div class="info"><h3>${p.nombre}</h3><p>$${p.precio}</p><a href="#/producto/${p.id}">Ver producto</a></div></div>`
+          ).join("")+"</div>";
+      } else {
+        // home
+        app.innerHTML=document.querySelector("main").innerHTML;
+        renderDestacados();
       }
     }
+    navegar();
 
-    // POST-PAGO
-    function renderPostPago(){
-      const data = JSON.parse(sessionStorage.getItem('cg_postpago')||'null');
-      if(!data){ app.innerHTML = '<p>Sin información de compra.</p>'; return; }
-      const {items,total,envio} = data;
-      const lines = items.map(i=>Array.from({length:i.cantidad},()=>`<div class="card" style="padding:10px;display:grid;grid-template-columns:90px 1fr auto;gap:10px">
-          <img src="${i.imagen||'https://dummyimage.com/80'}" alt="${i.nombre}" style="height:80px;width:80px;object-fit:cover;border-radius:10px;border:1px solid var(--border)">
-          <div><div><strong>${i.nombre}</strong> <span class="muted">(${i.id})</span></div><div class="muted">Talla: ${i.talla}</div></div>
-          <div style="text-align:right">${money(i.precio)}</div>
-        </div>`).join('')).join('');
-      app.innerHTML = `
-        <section class="bar"><span class="dot"></span> PAGO CONFIRMADO</section>
-        <div class="card" style="padding:14px">${lines}<div style="text-align:right;margin-top:10px"><strong>TOTAL: ${money(total)}</strong></div></div>
-        <section class="banner" style="margin-top:16px">
-          <h3>Datos de envío</h3>
-          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
-            <div><strong>Nombre:</strong> ${envio.nombre} ${envio.apellidos}</div>
-            <div><strong>CP/Estado:</strong> ${envio.cp} / ${envio.estado}</div>
-            <div><strong>Calle y número:</strong> ${envio.calle} ${envio.numero}${envio.interior? (' Int. '+envio.interior):''}</div>
-            <div><strong>Contacto:</strong> ${envio.correo} · ${envio.telefono}</div>
-          </div>
-          <p class="muted" style="margin-top:10px">Te enviamos un correo con el detalle del pedido. Mantente atento a las actualizaciones de envío.</p>
-        </section>
-        ${renderBanner()}
-        <div style="margin-top:16px"><a class="btn" href="#/">Volver al inicio</a></div>
-      `;
+    /* ----------- CARRITO Y FAVORITOS ----------- */
+    let carrito=[];
+    let tallaSeleccionada=null;
+    function seleccionarTalla(t){tallaSeleccionada=t; alert("Seleccionaste talla: "+t);}
+    function agregarCarrito(id){
+      const p=productos.find(x=>x.id===id);
+      if(!tallaSeleccionada){alert("Selecciona una talla"); return;}
+      if(p.stock[tallaSeleccionada]>0){
+        carrito.push({...p,talla:tallaSeleccionada});
+        p.stock[tallaSeleccionada]--;
+        alert("Agregado al carrito");
+        document.getElementById("cart-count").innerText=carrito.length;
+      } else {
+        alert("No hay stock disponible en esa talla");
+      }
     }
-
-    function renderNotFound(){ app.innerHTML = '<p>Página no encontrada.</p>'; }
-
+    function agregarFavorito(id){
+      let favoritos=JSON.parse(localStorage.getItem("favoritos"))||[];
+      if(!favoritos.includes(id)){favoritos.push(id); localStorage.setItem("favoritos",JSON.stringify(favoritos)); alert("Agregado a favoritos");}
+      else alert("Ya está en favoritos");
+    }
   </script>
 </body>
 </html>
