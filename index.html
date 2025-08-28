@@ -43,7 +43,7 @@
 
     /* Carousel */
     .carousel{position:relative;border-radius:16px;overflow:hidden;background:var(--card);border:1px solid var(--border); z-index:1;}
-    .carousel img{width:100%;height:auto;object-fit:contain} /* <-- Modificado para mostrar la imagen completa y adaptativa */
+    .carousel img{width:100%;height:auto;max-height:400px;object-fit:contain;} /* <- Corregido para que se vea completa y escalable */
     .carousel .dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px}
     .carousel .dots span{height:8px;width:8px;border-radius:999px;background:#fff;opacity:.5;border:1px solid #000}
     .carousel .dots span.active{opacity:1}
