@@ -1,238 +1,571 @@
 <!DOCTYPE html>
 <html lang="es"> 
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Chela Gask | Tienda</title>
-<style>
-:root{
---bg:#ffffff;--text:#111;--muted:#666;--brand:#111;--accent:#ff3b30;--pill:#f4f4f4;--card:#fafafa;--border:#eaeaea;
-}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans, "Apple Color Emoji","Segoe UI Emoji";}
-a{color:inherit;text-decoration:none}
-img{max-width:100%;display:block}
-/* Header, drawer, containers, carousel, grids, cards, footer, toast y botones */
-/* ...igual que en el código anterior para no repetir aquí por longitud... */
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chela Gask | Tienda</title>
+  <style>
+    :root{
+      --bg:#ffffff;--text:#111;--muted:#666;--brand:#111;--accent:#ff3b30;--pill:#f4f4f4;--card:#fafafa;--border:#eaeaea;
+    }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans, "Apple Color Emoji","Segoe UI Emoji";}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    
+    /* Header */
+    .header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--border);} 
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:12px 16px}
+    .logo{display:flex;align-items:center;gap:10px}
+    .logo img{height:28px;width:auto}
+    .brand{font-weight:700;letter-spacing:.3px}
+    .nav{display:flex;gap:20px;margin-left:28px}
+    .nav a{padding:8px 10px;border-radius:12px}
+    .nav a:hover{background:var(--pill)}
+    .spacer{flex:1}
+    .icon-btn{height:36px;width:36px;display:grid;place-items:center;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
+    .icon-btn:hover{background:var(--pill)}
+    .badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#fff;border-radius:999px;font-size:11px;padding:2px 6px}
+    .cart-wrap{position:relative}
+
+    /* Drawer */
+    .drawer{position:fixed;inset:0;pointer-events:none}
+    .drawer.open{pointer-events:auto}
+    .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.28);opacity:0;transition:.2s}
+    .drawer.open .backdrop{opacity:1}
+    .panel{position:absolute;left:0;top:0;height:100%;width:290px;background:#fff;transform:translateX(-100%);transition:.25s;border-right:1px solid var(--border);display:flex;flex-direction:column}
+    .drawer.open .panel{transform:translateX(0)}
+    .panel header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border)}
+    .panel nav a{display:block;padding:14px 16px;border-bottom:1px solid var(--border)}
+
+    /* Sections */
+    .container{max-width:1200px;margin:0 auto;padding:10px 16px 40px}
+    .bar{display:flex;align-items:center;gap:10px;padding:12px 8px;font-weight:700}
+    .bar .dot{height:8px;width:8px;border-radius:999px;background:#000}
+
+    /* Carousel */
+    .carousel{position:relative;border-radius:16px;overflow:hidden;background:var(--card);border:1px solid var(--border)}
+    .carousel img{width:100%;height:340px;object-fit:cover}
+    .carousel .dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px}
+    .carousel .dots span{height:8px;width:8px;border-radius:999px;background:#fff;opacity:.5;border:1px solid #000}
+    .carousel .dots span.active{opacity:1}
+
+    /* Grids */
+    .grid{display:grid;gap:14px}
+    .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    @media (max-width:960px){.grid.cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media (max-width:720px){.grid.cols-3{grid-template-columns:repeat(1,minmax(0,1fr))}}
+
+    .card{border:1px solid var(--border);border-radius:16px;background:#fff;overflow:hidden;display:flex;flex-direction:column}
+    .card .meta{padding:10px 12px}
+    .price{font-weight:700}
+    .muted{color:var(--muted)}
+
+    /* Footer banner */
+    .banner{margin-top:24px;border:1px dashed var(--border);border-radius:16px;padding:18px;background:#f9fafb}
+    .banner h3{margin:0 0 8px 0}
+    .footer{margin-top:26px;padding:26px 16px;border-top:1px solid var(--border);color:#555}
+
+    /* Toast */
+    .toast{position:fixed;right:16px;bottom:16px;background:#111;color:#fff;padding:12px 14px;border-radius:12px;opacity:0;transform:translateY(8px);transition:.25s;z-index:60}
+    .toast.show{opacity:1;transform:translateY(0)}
+
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:#111;color:#fff;cursor:pointer}
+    .btn.secondary{background:#fff;color:#111}
+    .qty{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:12px}
+    .qty button{background:#fff;border:0;padding:8px 10px;cursor:pointer}
+    .qty span{width:38px;display:inline-grid;place-items:center}
+
+    .form{display:grid;gap:12px}
+    .form .row{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media (max-width:720px){.form .row{grid-template-columns:1fr}}
+    input,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);}
+    label{font-size:.9rem;color:#333}
+    .error{color:var(--accent);font-size:.9rem}
+  </style>
 </head>
 <body>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <button id="menuBtn" class="icon-btn" aria-label="Menú">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <a href="#/" class="logo" title="Inicio">
+        <img src="logochelagask.jpg" alt="Logo Chela Gask" onerror="this.src='https://dummyimage.com/120x40/000/fff&text=CHELA+GASK'"/>
+        <span class="brand">Chela Gask</span>
+      </a>
+      <nav class="nav" id="topNav">
+        <!-- Subcategorías visibles tipo Nike -->
+        <a href="caballero.html">Caballero</a>
+        <a href="dama.html">Dama</a>
+        <a href="niño.html">Niñ@</a>
+        <a href="accesorios.html">Accesorios</a>
+        <a href="ropones.html">Ropones</a>
+        <a href="bisuteria.html">Bisutería</a>
+      </nav>
+      <div class="spacer"></div>
+      <a class="icon-btn" href="favoritos.html" aria-label="Favoritos" title="Favoritos">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+      </a>
+      <a class="icon-btn cart-wrap" href="carrito.html" aria-label="Carrito" title="Carrito">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 12.39A2 2 0 0 0 9.62 15h8.76a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span id="cartCount" class="badge" style="display:none">0</span>
+      </a>
+    </div>
+  </header>
 
-<!-- HEADER -->
-<header class="header">
-  <div class="header-inner">
-    <button id="menuBtn" class="icon-btn" aria-label="Menú">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-    </button>
-    <a href="#/" class="logo" title="Inicio">
-      <img src="logochelagask.jpg" alt="Logo Chela Gask" onerror="this.src='https://dummyimage.com/120x40/000/fff&text=CHELA+GASK'"/>
-      <span class="brand">Chela Gask</span>
-    </a>
-    <nav class="nav" id="topNav">
-      <a href="#/categoria/caballero">Caballero</a>
-      <a href="#/categoria/dama">Dama</a>
-      <a href="#/categoria/nino">Niñ@</a>
-      <a href="#/categoria/accesorios">Accesorios</a>
-      <a href="#/categoria/ropones">Ropones</a>
-      <a href="#/categoria/bisuteria">Bisutería</a>
-    </nav>
-    <div class="spacer"></div>
-    <a class="icon-btn cart-wrap" href="#/carrito" aria-label="Carrito" title="Carrito">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 12.39A2 2 0 0 0 9.62 15h8.76a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-      <span id="cartCount" class="badge" style="display:none">0</span>
-    </a>
+  <!-- DRAWER -->
+  <div id="drawer" class="drawer">
+    <div class="backdrop" onclick="toggleDrawer(false)"></div>
+    <aside class="panel" role="dialog" aria-label="Menú lateral">
+      <header>
+        <strong>Menú</strong>
+        <button class="icon-btn" onclick="toggleDrawer(false)" aria-label="Cerrar">✕</button>
+      </header>
+      <nav>
+        <a href="#/" onclick="toggleDrawer(false)">Inicio</a>
+        <a href="#/categoria/caballero" onclick="toggleDrawer(false)">Caballero</a>
+        <a href="#/categoria/dama" onclick="toggleDrawer(false)">Dama</a>
+        <a href="#/categoria/nino" onclick="toggleDrawer(false)">Niñ@</a>
+        <a href="#/categoria/accesorios" onclick="toggleDrawer(false)">Accesorios</a>
+        <a href="#/categoria/ropones" onclick="toggleDrawer(false)">Ropones</a>
+        <a href="#/categoria/bisuteria" onclick="toggleDrawer(false)">Bisutería</a>
+        <a href="#/carrito" onclick="toggleDrawer(false)">Carrito</a>
+      </nav>
+    </aside>
   </div>
-</header>
 
-<!-- DRAWER -->
-<div id="drawer" class="drawer">
-  <div class="backdrop" onclick="toggleDrawer(false)"></div>
-  <aside class="panel" role="dialog" aria-label="Menú lateral">
-    <header>
-      <strong>Menú</strong>
-      <button class="icon-btn" onclick="toggleDrawer(false)" aria-label="Cerrar">✕</button>
-    </header>
-    <nav>
-      <a href="#/" onclick="toggleDrawer(false)">Inicio</a>
-      <a href="#/categoria/caballero" onclick="toggleDrawer(false)">Caballero</a>
-      <a href="#/categoria/dama" onclick="toggleDrawer(false)">Dama</a>
-      <a href="#/categoria/nino" onclick="toggleDrawer(false)">Niñ@</a>
-      <a href="#/categoria/accesorios" onclick="toggleDrawer(false)">Accesorios</a>
-      <a href="#/categoria/ropones" onclick="toggleDrawer(false)">Ropones</a>
-      <a href="#/categoria/bisuteria" onclick="toggleDrawer(false)">Bisutería</a>
-      <a href="#/carrito" onclick="toggleDrawer(false)">Carrito</a>
-    </nav>
-  </aside>
-</div>
+  <!-- MAIN RENDER -->
+  <main id="app" class="container"></main>
 
-<!-- MAIN RENDER -->
-<main id="app" class="container"></main>
-<div id="toast" class="toast"></div>
-<footer class="footer">
-  © <span id="year"></span> Chela Gask. Todos los derechos reservados.
-</footer>
+  <div id="toast" class="toast"></div>
 
-<script>
-const $ = s => document.querySelector(s);
-const app = $('#app');
-const toast = $('#toast');
-let PRODUCTS = [];
-let state={carousel:0};
-const CATS = ['caballero','dama','nino','accesorios','ropones','bisuteria'];
+  <footer class="footer">
+    © <span id="year"></span> Chela Gask. Todos los derechos reservados.
+  </footer>
 
-function showToast(msg){ toast.textContent=msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),5000);}
-function money(n){ return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(n); }
 
-function getCart(){ try{ return JSON.parse(localStorage.getItem('cg_cart')||'[]'); }catch(e){return []} }
-function setCart(items){ localStorage.setItem('cg_cart', JSON.stringify(items)); updateCartCount(); }
-function updateCartCount(){ const c=getCart().reduce((a,i)=>a+i.cantidad,0); const el=$('#cartCount'); el.textContent=c; el.style.display=c?'inline-block':'none'; }
+  <script>
+    // ==========================
+    // 🔧 CONFIGURACIÓN RÁPIDA
+    // ==========================
+    // 1) Carrusel: agrega o cambia imágenes aquí. Usa rutas locales (carpeta /assets) o URLs. AQUI SE TIENE QUE CAMBIAR LAS FOTOS QUE SE IRAN MOSTRANDO 
+    const CAROUSEL_IMAGES = [
+      'modelo1.jpg',
+      'modelo2.jpg',
+      'modelo3.jpg'
+    ];
+    const CAROUSEL_INTERVAL_MS = 4000; // tiempo entre cambios
 
-const drawer = $('#drawer');
-$('#menuBtn').addEventListener('click', ()=>toggleDrawer(true));
-function toggleDrawer(open){ drawer.classList.toggle('open',!!open) }
+    // 2) Base de datos de productos (puedes reemplazarla con Google Sheets → CSV/JSON, ver notas más abajo)
+    // Campos mínimos: id, nombre, categoria, precio, imagenes[], tallas[], stockPorTalla{Talla:unidades}
+    const PRODUCTS = [
+      { id:'CG-001', nombre:'Playera Básica', categoria:'caballero', precio:199, imagenes:['assets/p1-1.jpg','assets/p1-2.jpg'], tallas:['S','M','L','XL'], stock:{'S':10,'M':8,'L':6,'XL':3}, promo:true },
+      { id:'CG-002', nombre:'Blusa Casual', categoria:'dama', precio:249, imagenes:['assets/p2-1.jpg','assets/p2-2.jpg'], tallas:['XS','S','M','L'], stock:{'XS':4,'S':7,'M':5,'L':2}, promo:false },
+      { id:'CG-003', nombre:'Conjunto Niño', categoria:'nino', precio:299, imagenes:['assets/p3-1.jpg'], tallas:['2','4','6','8'], stock:{'2':5,'4':6,'6':3,'8':2}, promo:true },
+      { id:'CG-004', nombre:'Ropón Ceremonia', categoria:'ropones', precio:899, imagenes:['assets/p4.jpg'], tallas:['Única'], stock:{'Única':5}, promo:true },
+      { id:'CG-005', nombre:'Collar Acero', categoria:'bisuteria', precio:149, imagenes:['assets/p5.jpg'], tallas:['Única'], stock:{'Única':20}, promo:false },
+      { id:'CG-006', nombre:'Gorra Logo', categoria:'accesorios', precio:179, imagenes:['assets/p6.jpg'], tallas:['Única'], stock:{'Única':12}, promo:false },
+      { id:'CG-007', nombre:'Sudadera Unisex', categoria:'caballero', precio:499, imagenes:['assets/p7.jpg'], tallas:['S','M','L'], stock:{'S':5,'M':5,'L':5}, promo:true },
+      { id:'CG-008', nombre:'Vestido Largo', categoria:'dama', precio:699, imagenes:['assets/p8.jpg'], tallas:['S','M','L'], stock:{'S':2,'M':3,'L':1}, promo:false }
+    ];
 
-window.addEventListener('hashchange', router);
-window.addEventListener('load', async ()=>{
-  updateCartCount();
-  await fetchProducts();
-  router();
-  $('#year').textContent=new Date().getFullYear();
-  startCarousel();
-});
+    // 3) Texto del banner inferior (puedes editar libremente)
+    const BANNER_INFO = {
+      titulo: 'Atención y envíos',
+      lineas: [
+        'Envíos a todo México. Tiempo estimado 2–5 días hábiles.',
+        'Cambios y devoluciones dentro de los 7 días con ticket.',
+        'WhatsApp de atención: 44xx xxx xxx (10:00–19:00).',
+        'Promos y novedades en Instagram: @chelagask.'
+      ]
+    };
 
-async function fetchProducts(){
-  try{
-    const SHEET_JSON_URL = 'TU_URL_DE_GOOGLE_APPS_SCRIPT'; // <--- Pega tu URL aquí
-    const res = await fetch(SHEET_JSON_URL);
-    PRODUCTS = await res.json();
-    PRODUCTS = PRODUCTS.map(p=>{
-      if(typeof p.imagenes==='string') p.imagenes=p.imagenes.split('|');
-      if(typeof p.tallas==='string') p.tallas=p.tallas.split('|');
-      if(typeof p.stock==='string') p.stock=JSON.parse(p.stock);
-      p.precio=parseFloat(p.precio);
-      p.promo=p.promo==='true'||p.promo===true;
-      return p;
-    });
-  }catch(e){ console.error('Error cargando productos:',e); }
-}
+    // ==========================
+    // Utilidades
+    // ==========================
+    const $ = s => document.querySelector(s);
+    const app = $('#app');
+    const toast = $('#toast');
+    const state = { idx:0 };
+    const CATS = ['caballero','dama','nino','accesorios','ropones','bisuteria'];
 
-// ---------------- ROUTER -----------------
-function router(){
-  const hash=location.hash||'#/';
-  if(hash==='#/'){ renderHome(); return; }
-  if(hash.startsWith('#/categoria/')){ renderCategory(hash.split('/')[2]); return; }
-  if(hash.startsWith('#/producto/')){ renderProduct(hash.split('/')[2]); return; }
-  if(hash==='#/carrito'){ renderCart(); return; }
-  if(hash==='#/gracias'){ renderPostPago(); return; }
-  app.innerHTML='<p>Página no encontrada</p>';
-}
+    function showToast(msg){
+      toast.textContent = msg; toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'), 5000);
+    }
+    function money(n){return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(n)}
 
-// ---------------- HOME -----------------
-function renderHome(){
-  app.innerHTML=`
-  <h2>Bienvenido a Chela Gask</h2>
-  <div class="grid cols-4" id="catGrid"></div>
-  <div class="banner">
-    <h3>Atención y envíos</h3>
-    <p>Envíos a todo México. Tiempo estimado 2–5 días hábiles.</p>
-    <p>Cambios y devoluciones dentro de los 7 días con ticket.</p>
-    <p>WhatsApp de atención: 44xx xxx xxx (10:00–19:00).</p>
-    <p>Promos y novedades en Instagram: @chelagask.</p>
-  </div>
-  `;
-  const grid=$('#catGrid');
-  CATS.forEach(cat=>{
-    grid.innerHTML+=`<a href="#/categoria/${cat}" class="card"><div class="meta"><strong>${cat.toUpperCase()}</strong></div></a>`;
-  });
-}
+    // LocalStorage Carrito
+    function getCart(){ try{ return JSON.parse(localStorage.getItem('cg_cart')||'[]'); }catch(e){return []}}
+    function setCart(items){ localStorage.setItem('cg_cart', JSON.stringify(items)); updateCartCount(); }
+    function updateCartCount(){ const c = getCart().reduce((a,i)=>a+i.cantidad,0); const el=$('#cartCount'); el.textContent=c; el.style.display=c? 'inline-block':'none'; }
 
-// ---------------- CATEGORY -----------------
-function renderCategory(cat){
-  const prods = PRODUCTS.filter(p=>p.categoria.toLowerCase()===cat.toLowerCase());
-  if(prods.length===0){ app.innerHTML='<p>No hay productos en esta categoría.</p>'; return;}
-  app.innerHTML=`<h2>${cat.toUpperCase()}</h2><div class="grid cols-4" id="prodGrid"></div>`;
-  const grid=$('#prodGrid');
-  prods.forEach(p=>{
-    grid.innerHTML+=`
-    <a href="#/producto/${p.id}" class="card">
-      <img src="${p.imagenes[0]}" alt="${p.nombre}">
-      <div class="meta">
-        <p>${p.nombre}</p>
-        <p class="price">${money(p.precio)}</p>
-      </div>
-    </a>
-    `;
-  });
-}
+    // Drawer
+    const drawer = $('#drawer');
+    $('#menuBtn').addEventListener('click', ()=>toggleDrawer(true));
+    function toggleDrawer(open){ drawer.classList.toggle('open', !!open) }
 
-// ---------------- PRODUCT -----------------
-function renderProduct(id){
-  const p = PRODUCTS.find(x=>x.id==id);
-  if(!p){ app.innerHTML='<p>Producto no encontrado</p>'; return; }
-  app.innerHTML=`
-  <h2>${p.nombre}</h2>
-  <img src="${p.imagenes[0]}" style="max-width:300px">
-  <p class="price">${money(p.precio)}</p>
-  <div class="form">
-    <label>Talla:</label>
-    <select id="selTalla">${p.tallas.map(t=>`<option value="${t}">${t}</option>`).join('')}</select>
-    <label>Cantidad:</label>
-    <input type="number" id="selCant" min="1" max="10" value="1">
-    <button class="btn" id="addCartBtn">Agregar al carrito</button>
-  </div>
-  `;
-  $('#addCartBtn').addEventListener('click', ()=>{
-    const talla=$('#selTalla').value;
-    const cantidad=parseInt($('#selCant').value)||1;
-    const cart=getCart();
-    const exists=cart.find(c=>c.id==p.id && c.talla===talla);
-    if(exists){ exists.cantidad+=cantidad; } else { cart.push({id:p.id,nombre:p.nombre,precio:p.precio,talla,cantidad}); }
-    setCart(cart); showToast('Producto agregado al carrito');
-  });
-}
+    // Router simple
+    window.addEventListener('hashchange', router);
+    window.addEventListener('load', ()=>{ updateCartCount(); router(); $('#year').textContent=new Date().getFullYear(); startCarousel(); });
 
-// ---------------- CART -----------------
-function renderCart(){
-  const cart=getCart();
-  if(cart.length===0){ app.innerHTML='<p>Carrito vacío</p>'; return; }
-  app.innerHTML='<h2>Carrito</h2><div id="cartItems"></div><h3>Total: <span id="cartTotal"></span></h3><button class="btn" id="btnComprar">Comprar</button>';
-  const container=$('#cartItems');
-  cart.forEach((c,i)=>{
-    const div=document.createElement('div');
-    div.className='card';
-    div.innerHTML=`<p>${c.nombre} - Talla: ${c.talla}</p><div class="qty"><button>-</button><span>${c.cantidad}</span><button>+</button></div><p>${money(c.precio*c.cantidad)}</p>`;
-    const btns=div.querySelectorAll('button');
-    btns[0].onclick=()=>{ if(c.cantidad>1)c.cantidad--; setCart(cart); renderCart(); }
-    btns[1].onclick=()=>{ c.cantidad++; setCart(cart); renderCart(); }
-    container.appendChild(div);
-  });
-  const total=cart.reduce((a,c)=>a+c.precio*c.cantidad,0);
-  $('#cartTotal').textContent=money(total);
-  $('#btnComprar').onclick=()=>{ localStorage.removeItem('cg_cart'); location.hash='#/gracias'; }
-}
+    function router(){
+      const h = location.hash.slice(1) || '/';
+      const [_, route, a, b] = h.split('/');
+      if(h === '/' || route==='') return renderHome();
+      if(route==='categoria') return renderCategory(a);
+      if(route==='producto') return renderProduct(decodeURIComponent(a));
+      if(route==='carrito') return renderCart();
+      if(route==='postpago') return renderPostPago();
+      return renderNotFound();
+    }
 
-// ---------------- POST-PAGO -----------------
-function renderPostPago(){
-  app.innerHTML='<h2>¡Gracias por tu compra!</h2><p>Tu pedido ha sido procesado correctamente.</p>';
-}
+    // ==========================
+    // HOME
+    // ==========================
+    function renderHome(){
+      app.innerHTML = `
+        <section class="bar"><span class="dot"></span> LO NUEVO</section>
+        <section class="carousel" id="carousel"></section>
+        <section style="margin-top:18px">
+          <h3>Artículos destacados</h3>
+          <div class="grid cols-4" id="destacados"></div>
+        </section>
+        <section style="margin-top:10px" class="bar"><span class="dot"></span> PROMOCIONES</section>
+        <section>
+          <div class="grid cols-3" id="promos"></div>
+        </section>
+        ${renderBanner()}
+      `;
+      mountCarousel();
+      mountDestacados();
+      mountPromos();
+    }
 
-// ---------------- CAROUSEL -----------------
-function startCarousel(){
-  if(CAROUSEL_IMAGES.length===0) return;
-  const container=document.createElement('div');
-  container.className='carousel';
-  const img=document.createElement('img');
-  img.src=CAROUSEL_IMAGES[0];
-  container.appendChild(img);
-  const dots=document.createElement('div'); dots.className='dots';
-  CAROUSEL_IMAGES.forEach((_,i)=>{ const s=document.createElement('span'); if(i===0)s.classList.add('active'); dots.appendChild(s); });
-  container.appendChild(dots);
-  app.prepend(container);
-  setInterval(()=>{
-    state.carousel=(state.carousel+1)%CAROUSEL_IMAGES.length;
-    img.src=CAROUSEL_IMAGES[state.carousel];
-    dots.querySelectorAll('span').forEach((s,i)=>s.classList.toggle('active',i===state.carousel));
-  },4000);
-}
-</script>
+    // Carrusel
+    function mountCarousel(){
+      const el = $('#carousel');
+      el.innerHTML = `
+        <img id="carImg" alt="Carrusel" src="${CAROUSEL_IMAGES[state.idx % CAROUSEL_IMAGES.length]}">
+        <div class="dots">${CAROUSEL_IMAGES.map((_,i)=>`<span data-i="${i}" class="${i===state.idx?'active':''}"></span>`).join('')}</div>
+      `;
+    }
+    function startCarousel(){
+      setInterval(()=>{
+        state.idx = (state.idx + 1) % CAROUSEL_IMAGES.length;
+        const img = $('#carImg'); if(!img) return; img.src = CAROUSEL_IMAGES[state.idx];
+        document.querySelectorAll('.carousel .dots span').forEach((d,i)=>{
+          d.classList.toggle('active', i===state.idx)
+        })
+      }, CAROUSEL_INTERVAL_MS);
+    }
+
+    // Destacados aleatorios (cambia al refrescar)
+    function mountDestacados(){
+      const cont = $('#destacados');
+      const shuffled = [...PRODUCTS].sort(()=>Math.random()-0.5).slice(0,4);
+      cont.innerHTML = shuffled.map(p=>cardHTML(p)).join('');
+    }
+    // Promos: 3 aleatorias al refrescar
+    function mountPromos(){
+      const cont = $('#promos');
+      const pool = PRODUCTS.filter(p=>p.promo);
+      const pick = (pool.length>=3? pool.sort(()=>Math.random()-0.5).slice(0,3) : pool);
+      cont.innerHTML = pick.map(p=>cardHTML(p)).join('');
+    }
+
+    function cardHTML(p){
+      return `
+      <article class="card">
+        <a href="#/producto/${encodeURIComponent(p.id)}">
+          <img loading="lazy" src="${p.imagenes[0]||''}" alt="${p.nombre}">
+        </a>
+        <div class="meta">
+          <div class="muted" style="font-size:.85rem;text-transform:uppercase">${p.categoria}</div>
+          <a href="#/producto/${encodeURIComponent(p.id)}"><strong>${p.nombre}</strong></a>
+          <div class="price">${money(p.precio)}</div>
+        </div>
+      </article>`
+    }
+
+    function renderBanner(){
+      return `
+        <section class="banner">
+          <h3>${BANNER_INFO.titulo}</h3>
+          <ul style="margin:0;padding-left:18px;color:#333">
+            ${BANNER_INFO.lineas.map(x=>`<li>${x}</li>`).join('')}
+          </ul>
+        </section>
+      `;
+    }
+
+    // ==========================
+    // CATEGORÍA
+    // ==========================
+    function renderCategory(cat){
+      if(!CATS.includes(cat)) return renderNotFound();
+      const items = PRODUCTS.filter(p=>p.categoria===cat);
+      app.innerHTML = `
+        <section class="bar"><span class="dot"></span> ${cat.toUpperCase()}</section>
+        <div class="grid cols-4">${items.map(cardHTML).join('')}</div>
+        ${renderBanner()}
+      `;
+    }
+
+    // ==========================
+    // PRODUCTO
+    // ==========================
+    function renderProduct(id){
+      const p = PRODUCTS.find(x=>x.id===id);
+      if(!p) return renderNotFound();
+      const tallaDefault = p.tallas[0];
+      app.innerHTML = `
+        <div class="grid" style="grid-template-columns: 1.1fr .9fr; gap:24px">
+          <div>
+            <div id="gal" class="grid" style="grid-template-columns:repeat(5, minmax(0,1fr)); gap:10px; margin-bottom:10px">
+              ${p.imagenes.map((src,i)=>`<img class="thumb" data-i="${i}" style="border:1px solid var(--border);border-radius:10px;cursor:pointer" src="${src}" alt="${p.nombre} ${i+1}">`).join('')}
+            </div>
+            <div style="border:1px solid var(--border);border-radius:16px;overflow:hidden">
+              <img id="mainImg" src="${p.imagenes[0]}" alt="${p.nombre}" style="width:100%;max-height:520px;object-fit:cover">
+            </div>
+          </div>
+          <div>
+            <h1 style="margin:0 0 8px 0">${p.nombre}</h1>
+            <div class="muted">Modelo: ${p.id}</div>
+            <div class="price" style="font-size:1.4rem;margin:6px 0 14px 0">${money(p.precio)}</div>
+            <div style="margin:12px 0">
+              <label>Talla</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">${p.tallas.map(t=>`<button class="btn secondary talla" data-t="${t}">${t}</button>`).join('')}</div>
+            </div>
+            <div style="margin:12px 0">
+              <label>Cantidad</label>
+              <div class="qty"><button onclick="chgQty(-1)">−</button><span id="qty">1</span><button onclick="chgQty(1)">+</button></div>
+            </div>
+            <div class="muted" id="stockMsg">Disponibles: ${p.stock[tallaDefault]||0}</div>
+            <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn" id="addBtn">Agregar al carrito</button>
+              <a class="btn secondary" href="#/carrito">Ver carrito</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Galería
+      document.querySelectorAll('.thumb').forEach(th=>{
+        th.addEventListener('click', ()=>{ $('#mainImg').src = th.src; });
+      });
+
+      // Tallas
+      let tallaSel = tallaDefault; markTalla();
+      document.querySelectorAll('.talla').forEach(b=>{
+        b.addEventListener('click', ()=>{ tallaSel = b.dataset.t; markTalla(); $('#stockMsg').textContent = 'Disponibles: '+(p.stock[tallaSel]||0); });
+      });
+      function markTalla(){
+        document.querySelectorAll('.talla').forEach(x=>x.style.borderColor='var(--border)');
+        const btn = document.querySelector(`.talla[data-t="${tallaSel}"]`); if(btn) btn.style.borderColor='#111';
+      }
+
+      // Cantidad
+      window.chgQty = function(d){ const el=$('#qty'); let v=+el.textContent; v=Math.max(1, v+d); el.textContent=v };
+
+      // Agregar al carrito
+      $('#addBtn').addEventListener('click', ()=>{
+        const cantidad = +$('#qty').textContent;
+        const stock = p.stock[tallaSel]||0;
+        if(cantidad>stock){ showToast('No hay suficientes piezas en stock para esa talla.'); return; }
+        const cart = getCart();
+        cart.push({ id:p.id, nombre:p.nombre, precio:p.precio, talla:tallaSel, cantidad, imagen:p.imagenes[0] });
+        setCart(cart);
+        showToast('Se agregó al carrito.');
+      });
+    }
+
+    // ==========================
+    // CARRITO
+    // ==========================
+    function renderCart(){
+      const cart = getCart();
+      const total = cart.reduce((a,i)=>a + i.precio * i.cantidad, 0);
+      const lines = cart.map(i=>{
+        // mostrar cada pieza enlistada
+        return Array.from({length:i.cantidad}, (_,k)=>`<div class="card" style="padding:10px;display:grid;grid-template-columns:90px 1fr auto;gap:10px">
+          <img src="${i.imagen}" alt="${i.nombre}" style="height:80px;width:80px;object-fit:cover;border-radius:10px;border:1px solid var(--border)">
+          <div>
+            <div><strong>${i.nombre}</strong> <span class="muted">(${i.id})</span></div>
+            <div class="muted">Talla: ${i.talla}</div>
+          </div>
+          <div style="text-align:right">${money(i.precio)}</div>
+        </div>`).join('')
+      }).join('');
+
+      app.innerHTML = `
+        <section class="bar"><span class="dot"></span> CONFIRMACIÓN DE COMPRA</section>
+        <div class="grid" style="grid-template-columns: 1.1fr .9fr; gap:20px">
+          <div>
+            ${cart.length? lines : '<p class="muted">Tu carrito está vacío.</p>'}
+            <div style="text-align:right;margin-top:10px"><strong>TOTAL: ${money(total)}</strong></div>
+
+            <section class="banner" style="margin-top:16px">
+              <h3>Datos de envío a domicilio</h3>
+              <form id="envioForm" class="form">
+                <div class="row">
+                  <div>
+                    <label>Nombre</label>
+                    <input required name="nombre" />
+                  </div>
+                  <div>
+                    <label>Apellidos</label>
+                    <input required name="apellidos" />
+                  </div>
+                </div>
+                <div class="row">
+                  <div>
+                    <label>Código Postal (CP)</label>
+                    <input required name="cp" pattern="\\d{5}" placeholder="5 dígitos" />
+                  </div>
+                  <div>
+                    <label>Estado (auto)</label>
+                    <input required name="estado" id="estadoAuto" readonly />
+                  </div>
+                </div>
+                <div class="row">
+                  <div>
+                    <label>Calle</label>
+                    <input required name="calle" />
+                  </div>
+                  <div>
+                    <label>Número</label>
+                    <input required name="numero" />
+                  </div>
+                </div>
+                <div class="row">
+                  <div>
+                    <label>Número interior (opcional)</label>
+                    <input name="interior" />
+                  </div>
+                  <div>
+                    <label>Correo</label>
+                    <input required type="email" name="correo" />
+                  </div>
+                </div>
+                <div>
+                  <label>Teléfono</label>
+                  <input required name="telefono" pattern="[0-9\s+()-]{8,}" />
+                </div>
+                <div class="error" id="formError" style="display:none">Completa todos los campos obligatorios.</div>
+              </form>
+            </section>
+          </div>
+          <div>
+            <div class="card" style="padding:14px">
+              <h3 style="margin:4px 0 12px 0">Pago</h3>
+              <p class="muted" style="margin-top:0">Integración real con Mercado Pago requiere un pequeño backend (ver comentarios en el código). Abajo tienes un simulador de flujo:</p>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <button class="btn" onclick="simularPago('ok')">Pagar (Simular OK)</button>
+                <button class="btn secondary" onclick="simularPago('error')">Simular ERROR</button>
+                <button class="btn secondary" onclick="simularPago('insuficiente')">Simular FONDOS INSUFICIENTES</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        ${renderBanner()}
+      `;
+
+      // Autollenado Estado por CP (primeros 2 dígitos → estado)
+      const CP_MAP = { '01':'Aguascalientes','02':'Baja California','03':'Baja California Sur','04':'Campeche','05':'Coahuila','06':'Colima','07':'Chiapas','08':'Chihuahua','09':'Ciudad de México','10':'Durango','11':'Guanajuato','12':'Guerrero','13':'Hidalgo','14':'Jalisco','15':'México','16':'Michoacán','17':'Morelos','18':'Nayarit','19':'Nuevo León','20':'Oaxaca','21':'Puebla','22':'Querétaro','23':'Quintana Roo','24':'San Luis Potosí','25':'Sinaloa','26':'Sonora','27':'Tabasco','28':'Tamaulipas','29':'Tlaxcala','30':'Veracruz','31':'Yucatán','32':'Zacatecas' };
+      const cpInput = document.querySelector('input[name="cp"]');
+      cpInput.addEventListener('input', ()=>{
+        const v = cpInput.value.replace(/\D/g,''); if(v.length>=2){ $('#estadoAuto').value = CP_MAP[v.slice(0,2)] || ''; }
+      });
+
+      window.simularPago = function(tipo){
+        const form = document.getElementById('envioForm');
+        if(!form.checkValidity()){ $('#formError').style.display='block'; form.reportValidity(); return; }
+        $('#formError').style.display='none';
+        if(tipo==='ok'){
+          // En integración real: esperar confirmación del backend / webhook
+          const datos = Object.fromEntries(new FormData(form).entries());
+          const resumen = { items:getCart(), total: getCart().reduce((a,i)=>a+i.precio*i.cantidad,0), envio:datos };
+          sessionStorage.setItem('cg_postpago', JSON.stringify(resumen));
+          // opcional: aquí podrías disparar un email via API (EmailJS/App Script)
+          location.hash = '/postpago';
+          // Vaciar carrito
+          setCart([]);
+        } else if(tipo==='error') {
+          showToast('PAGO ERROR: intenta nuevamente.');
+        } else {
+          showToast('Fondos insuficientes: intenta con otro método.');
+        }
+      }
+    }
+
+    // ==========================
+    // POST-PAGO
+    // ==========================
+    function renderPostPago(){
+      const data = JSON.parse(sessionStorage.getItem('cg_postpago')||'null');
+      if(!data){ app.innerHTML = '<p>Sin información de compra.</p>'; return; }
+      const {items,total,envio} = data;
+      const lines = items.map(i=>Array.from({length:i.cantidad},()=>`<div class="card" style="padding:10px;display:grid;grid-template-columns:90px 1fr auto;gap:10px">
+          <img src="${i.imagen}" alt="${i.nombre}" style="height:80px;width:80px;object-fit:cover;border-radius:10px;border:1px solid var(--border)">
+          <div><div><strong>${i.nombre}</strong> <span class="muted">(${i.id})</span></div><div class="muted">Talla: ${i.talla}</div></div>
+          <div style="text-align:right">${money(i.precio)}</div>
+        </div>`).join('')).join('');
+      app.innerHTML = `
+        <section class="bar"><span class="dot"></span> PAGO CONFIRMADO</section>
+        <div class="card" style="padding:14px">${lines}<div style="text-align:right;margin-top:10px"><strong>TOTAL: ${money(total)}</strong></div></div>
+        <section class="banner" style="margin-top:16px">
+          <h3>Datos de envío</h3>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+            <div><strong>Nombre:</strong> ${envio.nombre} ${envio.apellidos}</div>
+            <div><strong>CP/Estado:</strong> ${envio.cp} / ${envio.estado}</div>
+            <div><strong>Calle y número:</strong> ${envio.calle} ${envio.numero}${envio.interior? (' Int. '+envio.interior):''}</div>
+            <div><strong>Contacto:</strong> ${envio.correo} · ${envio.telefono}</div>
+          </div>
+          <p class="muted" style="margin-top:10px">Te enviamos un correo con el detalle del pedido. Mantente atento a las actualizaciones de envío.</p>
+        </section>
+        ${renderBanner()}
+        <div style="margin-top:16px"><a class="btn" href="#/">Volver al inicio</a></div>
+      `;
+    }
+
+    function renderNotFound(){ app.innerHTML = '<p>Página no encontrada.</p>'; }
+
+    // ==========================
+    // 📌 Notas de implementación (lee y borra si gustas)
+    // ==========================
+    /*
+    ─────────────────────────────────────────────────────────────────────
+    1) Reemplazar "base de datos" por Google Sheets
+       - Crea una hoja con columnas: id, nombre, categoria, precio, imagenes (separadas por |), tallas (separadas por |), stock (JSON tipo {"S":10,"M":5}) y promo (true/false).
+       - En Google Sheets: Archivo → Publicar en la web → como CSV.
+       - Obtén la URL pública del CSV y haz fetch desde JS:
+           fetch('URL_DEL_CSV').then(r=>r.text()).then(csv=>{ /* parsea csv → PRODUCTS */ })
+       - O usa Apps Script para exponer un JSON bello y lo reemplazas en la constante PRODUCTS.
+
+    2) Mercado Pago en GitHub Pages (sin servidor)
+       - MP requiere crear una "preferencia" en backend para obtener el init_point. Puedes usar:
+         • Google Apps Script, Cloudflare Workers, Netlify Functions o Vercel Edge Functions.
+       - Flujo: cliente → tu función serverless crea preferencia (monto, ítems, back_urls) → devuelve init_point → rediriges al checkout MP.
+       - back_urls (success, pending, failure) deben regresar a: https://TU_USUARIO.github.io/tu-repo/#/postpago
+       - En la página de éxito (postpago) validas el pago consultando tu backend o Webhook (recomendado) y luego vacías el carrito.
+
+    3) Email de confirmación (estático)
+       - Usa EmailJS o Apps Script (doPost) para enviar el correo con el resumen (items + dirección).
+
+    4) Imágenes del carrusel y productos
+       - Ponlas en /assets y actualiza CAROUSEL_IMAGES y PRODUCTS.imagenes.
+
+    5) Subpáginas
+       - Ya están cubiertas por router: #/categoria/{caballero|dama|nino|accesorios|ropones|bisuteria}
+       - Producto individual: #/producto/{ID}
+       - Carrito: #/carrito
+
+    6) Estilos
+       - El diseño es limpio tipo "Nike". Ajusta colores en :root.
+    */
+  </script>
 </body>
 </html>
