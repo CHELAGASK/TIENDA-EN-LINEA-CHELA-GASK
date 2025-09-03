@@ -672,6 +672,56 @@
 
     function renderNotFound(){ app.innerHTML = '<p>Página no encontrada.</p>'; }
 
+    //Para que muestre los recuadros en cada pagina segun corresponda 
+    function router(){
+    const h = location.hash.slice(1) || '/';
+    const [_, route, a] = h.split('/');
+    if(h === '/' || route==='') return renderHome();
+    if(route==='categoria') return renderCategory(a);
+    if(route==='producto') return renderProduct(decodeURIComponent(a));
+    if(route==='carrito') return renderCart();
+    if(route==='postpago' || route==='gracias') return renderPostPago();
+    return renderNotFound();
+  }
+
+  // ==========================
+  // RENDER POR CATEGORÍA
+  // ==========================
+  function renderCategory(catName){
+    const normalized = normalizeForCompare(catName);
+    const productos = PRODUCTS.filter(p => normalizeForCompare(p.categoria) === normalized);
+
+    app.innerHTML = `
+      <section class="bar">
+        <span class="dot"></span> ${catName.toUpperCase()}
+      </section>
+      <section>
+        <div class="grid cols-4" id="catGrid">
+          ${productos.length ? productos.map(p=>cardHTML(p)).join('') : '<p>No hay productos en esta categoría.</p>'}
+        </div>
+      </section>
+      ${renderBanner()}
+    `;
+  }
+
+  // ==========================
+  // CARD HTML (ya lo tenías)
+  // ==========================
+  function cardHTML(p){
+    return `
+    <article class="card">
+      <a href="#/producto/${encodeURIComponent(p.id)}">
+        <img loading="lazy" src="${p.imagenes && p.imagenes[0] ? p.imagenes[0] : 'https://dummyimage.com/600x400/ddd/000&text=Sin+imagen'}" alt="${p.nombre}">
+      </a>
+      <div class="meta">
+        <div class="muted" style="font-size:.85rem;text-transform:uppercase">${p.categoria}</div>
+        <a href="#/producto/${encodeURIComponent(p.id)}"><strong>${p.nombre}</strong></a>
+        <div class="price">${money(p.precio)}</div>
+      </div>
+    </article>
+    `;
+  }
+
   </script>
 </body>
 </html>
