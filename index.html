@@ -172,17 +172,70 @@
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQA5cjti6B1RjNH6KVj-bap6xLoILJ91CONi5d6Ybj1R6T0etd44373NBhCxLYY-yqQPtepU1rWy0hd/pub?output=csv';
 
     // Fallback: productos embebidos (se usan si la carga desde Google falla)
-    let PRODUCTS = [
-      { id:'CG-001', nombre:'Playera Básica', categoria:'caballero', precio:199, imagenes:['assets/p1-1.jpg','assets/p1-2.jpg'], tallas:['S','M','L','XL'], stock:{'S':10,'M':8,'L':6,'XL':3}, promo:true },
-      { id:'CG-002', nombre:'Blusa Casual', categoria:'dama', precio:249, imagenes:['assets/p2-1.jpg','assets/p2-2.jpg'], tallas:['XS','S','M','L'], stock:{'XS':4,'S':7,'M':5,'L':2}, promo:false },
-      { id:'CG-003', nombre:'Conjunto Niño', categoria:'nino', precio:299, imagenes:['assets/p3-1.jpg'], tallas:['2','4','6','8'], stock:{'2':5,'4':6,'6':3,'8':2}, promo:true },
-      { id:'CG-004', nombre:'Ropón Ceremonia', categoria:'ropones', precio:899, imagenes:['assets/p4.jpg'], tallas:['Única'], stock:{'Única':5}, promo:true },
-      { id:'CG-005', nombre:'Collar Acero', categoria:'bisuteria', precio:149, imagenes:['assets/p5.jpg'], tallas:['Única'], stock:{'Única':20}, promo:false },
-      { id:'CG-006', nombre:'Gorra Logo', categoria:'accesorios', precio:179, imagenes:['assets/p6.jpg'], tallas:['Única'], stock:{'Única':12}, promo:false },
-      { id:'CG-007', nombre:'Sudadera Unisex', categoria:'caballero', precio:499, imagenes:['assets/p7.jpg'], tallas:['S','M','L'], stock:{'S':5,'M':5,'L':5}, promo:true },
-      { id:'CG-008', nombre:'Vestido Largo', categoria:'dama', precio:699, imagenes:['assets/p8.jpg'], tallas:['S','M','L'], stock:{'S':2,'M':3,'L':1}, promo:false }
-    ];
+    let PRODUCTS = [];
 
+     function parseCSV(txt){
+      return txt.split(/\r?\n/).map(r=>r.split(','));
+    }
+
+    async function fetchProducts(){
+      try{
+        const res = await fetch(SHEET_CSV_URL);
+        const txt = await res.text();
+        const rows = parseCSV(txt);
+        const headers = rows[0];
+        PRODUCTS = rows.slice(1).map(r=>{
+          let obj = {};
+          headers.forEach((h,i)=> obj[h.trim().toLowerCase()] = r[i]);
+          return {
+            id: obj.id,
+            nombre: obj.nombre,
+            categoria: obj.categoria.toLowerCase(),
+            precio: obj.precio,
+            imagenes: obj.imagenes ? obj.imagenes.split('|') : []
+          };
+        });
+      }catch(e){ console.error('Error cargando productos',e);}
+    }
+
+    function cardHTML(p){
+      return `
+        <article class="card">
+          <img src="${p.imagenes[0]||'https://dummyimage.com/600x400/ddd/000&text=Sin+imagen'}" alt="${p.nombre}">
+          <div class="meta">
+            <h4>${p.nombre}</h4>
+            <div class="price">$${p.precio}</div>
+          </div>
+        </article>`;
+    }
+
+    function renderCategory(cat){
+      const cont = document.getElementById('app');
+      const items = PRODUCTS.filter(p=>p.categoria===cat);
+      cont.innerHTML = `
+        <h2 style="margin:16px 0;text-transform:capitalize">${cat}</h2>
+        <div class="grid cols-4">
+          ${items.map(cardHTML).join('')}
+        </div>
+      `;
+    }
+
+    function router(){
+      const h = location.pathname.toLowerCase();
+      if(h.includes('caballero')) return renderCategory('caballero');
+      if(h.includes('dama')) return renderCategory('dama');
+      if(h.includes('niño')||h.includes('nino')) return renderCategory('niño');
+      if(h.includes('accesorios')) return renderCategory('accesorios');
+      if(h.includes('ropones')) return renderCategory('ropones');
+      if(h.includes('bisuteria')) return renderCategory('bisuteria');
+    }
+
+    window.addEventListener('DOMContentLoaded', async ()=>{
+      await fetchProducts();
+      router();
+      document.getElementById('year').textContent = new Date().getFullYear();
+    });
+    
     const BANNER_INFO = {
       titulo: 'Atención y envíos',
       lineas: [
@@ -671,56 +724,6 @@
     }
 
     function renderNotFound(){ app.innerHTML = '<p>Página no encontrada.</p>'; }
-
-    //Para que muestre los recuadros en cada pagina segun corresponda 
-    function router(){
-    const h = location.hash.slice(1) || '/';
-    const [_, route, a] = h.split('/');
-    if(h === '/' || route==='') return renderHome();
-    if(route==='categoria') return renderCategory(a);
-    if(route==='producto') return renderProduct(decodeURIComponent(a));
-    if(route==='carrito') return renderCart();
-    if(route==='postpago' || route==='gracias') return renderPostPago();
-    return renderNotFound();
-  }
-
-  // ==========================
-  // RENDER POR CATEGORÍA
-  // ==========================
-  function renderCategory(catName){
-    const normalized = normalizeForCompare(catName);
-    const productos = PRODUCTS.filter(p => normalizeForCompare(p.categoria) === normalized);
-
-    app.innerHTML = `
-      <section class="bar">
-        <span class="dot"></span> ${catName.toUpperCase()}
-      </section>
-      <section>
-        <div class="grid cols-4" id="catGrid">
-          ${productos.length ? productos.map(p=>cardHTML(p)).join('') : '<p>No hay productos en esta categoría.</p>'}
-        </div>
-      </section>
-      ${renderBanner()}
-    `;
-  }
-
-  // ==========================
-  // CARD HTML (ya lo tenías)
-  // ==========================
-  function cardHTML(p){
-    return `
-    <article class="card">
-      <a href="#/producto/${encodeURIComponent(p.id)}">
-        <img loading="lazy" src="${p.imagenes && p.imagenes[0] ? p.imagenes[0] : 'https://dummyimage.com/600x400/ddd/000&text=Sin+imagen'}" alt="${p.nombre}">
-      </a>
-      <div class="meta">
-        <div class="muted" style="font-size:.85rem;text-transform:uppercase">${p.categoria}</div>
-        <a href="#/producto/${encodeURIComponent(p.id)}"><strong>${p.nombre}</strong></a>
-        <div class="price">${money(p.precio)}</div>
-      </div>
-    </article>
-    `;
-  }
 
   </script>
 </body>
