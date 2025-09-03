@@ -174,67 +174,7 @@
     // Fallback: productos embebidos (se usan si la carga desde Google falla)
     let PRODUCTS = [];
 
-     function parseCSV(txt){
-      return txt.split(/\r?\n/).map(r=>r.split(','));
-    }
 
-    async function fetchProducts(){
-      try{
-        const res = await fetch(SHEET_CSV_URL);
-        const txt = await res.text();
-        const rows = parseCSV(txt);
-        const headers = rows[0];
-        PRODUCTS = rows.slice(1).map(r=>{
-          let obj = {};
-          headers.forEach((h,i)=> obj[h.trim().toLowerCase()] = r[i]);
-          return {
-            id: obj.id,
-            nombre: obj.nombre,
-            categoria: obj.categoria.toLowerCase(),
-            precio: obj.precio,
-            imagenes: obj.imagenes ? obj.imagenes.split('|') : []
-          };
-        });
-      }catch(e){ console.error('Error cargando productos',e);}
-    }
-
-    function cardHTML(p){
-      return `
-        <article class="card">
-          <img src="${p.imagenes[0]||'https://dummyimage.com/600x400/ddd/000&text=Sin+imagen'}" alt="${p.nombre}">
-          <div class="meta">
-            <h4>${p.nombre}</h4>
-            <div class="price">$${p.precio}</div>
-          </div>
-        </article>`;
-    }
-
-    function renderCategory(cat){
-      const cont = document.getElementById('app');
-      const items = PRODUCTS.filter(p=>p.categoria===cat);
-      cont.innerHTML = `
-        <h2 style="margin:16px 0;text-transform:capitalize">${cat}</h2>
-        <div class="grid cols-4">
-          ${items.map(cardHTML).join('')}
-        </div>
-      `;
-    }
-
-    function router(){
-      const h = location.pathname.toLowerCase();
-      if(h.includes('caballero')) return renderCategory('caballero');
-      if(h.includes('dama')) return renderCategory('dama');
-      if(h.includes('niño')||h.includes('nino')) return renderCategory('niño');
-      if(h.includes('accesorios')) return renderCategory('accesorios');
-      if(h.includes('ropones')) return renderCategory('ropones');
-      if(h.includes('bisuteria')) return renderCategory('bisuteria');
-    }
-
-    window.addEventListener('DOMContentLoaded', async ()=>{
-      await fetchProducts();
-      router();
-      document.getElementById('year').textContent = new Date().getFullYear();
-    });
     
     const BANNER_INFO = {
       titulo: 'Atención y envíos',
@@ -254,6 +194,40 @@
     const toast = $('#toast');
     const state = { idx:0 };
     const CATS = ['caballero','dama','nino','accesorios','ropones','bisuteria'];
+
+    // ========================
+    // AÑADIDO: Render de categoría
+    // ========================
+    function renderCategory(cat){
+      const catNorm = normalizeForCompare(cat);
+      const productosCat = PRODUCTS.filter(p => normalizeForCompare(p.categoria) === catNorm);
+      app.innerHTML = `
+        <section class="bar"><span class="dot"></span> ${cat.toUpperCase()}</section>
+        <div class="grid cols-4" id="catGrid"></div>
+        ${renderBanner()}
+      `;
+      const cont = document.getElementById('catGrid');
+      if(productosCat.length){
+        cont.innerHTML = productosCat.map(p=>cardHTML(p)).join('');
+      } else {
+        cont.innerHTML = '<p>No hay productos en esta categoría.</p>';
+      }
+    }
+
+    // Tarjeta de producto
+    function cardHTML(p){
+      return `
+        <article class="card">
+          <a href="#/producto/${encodeURIComponent(p.id)}">
+            <img loading="lazy" src="${p.imagenes && p.imagenes[0] ? p.imagenes[0] : 'https://dummyimage.com/400x400/ccc/000&text=Sin+imagen'}" alt="${p.nombre}">
+          </a>
+          <div class="meta">
+            <h4>${p.nombre}</h4>
+            <div class="price">${money(p.precio)}</div>
+          </div>
+        </article>
+      `;
+    }
 
     function showToast(msg){
       toast.textContent = msg; toast.classList.add('show');
