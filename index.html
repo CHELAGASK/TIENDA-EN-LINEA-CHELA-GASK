@@ -478,8 +478,27 @@
 
     // CATEGORÍA
     function renderCategory(cat){
+      // --------------- ADICIÓN SÚPER PEQUEÑA: si aún no hay productos (carga asíncrona), intentar cargarlos y re-renderizar
       const norm = normalizeForCompare(cat);
       if(!CATS.includes(norm)) return renderNotFound();
+
+      //(SE AÑADIO) Si PRODUCTS está vacío, mostrar mensaje y forzar carga desde CSV (por si el usuario entró antes de que load() completara)
+      if((!PRODUCTS || PRODUCTS.length === 0) && SHEET_CSV_URL){
+        app.innerHTML = `
+          <section class="bar"><span class="dot"></span> ${cat.toUpperCase()}</section>
+          <p class="muted">Cargando productos... (intentando desde Google Sheets)</p>
+        `;
+        // Intentar cargar y luego re-renderizar la misma categoría
+        fetchProductsFromCSV(SHEET_CSV_URL).then(() => {
+          // small delay to ensure UI updates
+          setTimeout(()=> renderCategory(cat), 80);
+        }).catch(()=>{
+          // si falla, seguirá usando fallback (si existe)
+          setTimeout(()=> renderCategory(cat), 80);
+        });
+        return;
+      }
+      
       const items = PRODUCTS.filter(p=> normalizeForCompare(p.categoria) === norm);
       app.innerHTML = `
         <section class="bar"><span class="dot"></span> ${cat.toUpperCase()}</section>
