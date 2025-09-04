@@ -690,6 +690,22 @@
     
     function renderNotFound(){ app.innerHTML = '<p>Página no encontrada.</p>'; }
 
+    // ===========================
+  // AÑADIDO: BOTONES NUEVOS (solo agregado)
+  // ===========================
+  // Ejemplo de función de agregar botón extra para votación o acción extra
+  function addExtraButtons(){
+    const cont = document.createElement('div');
+    cont.style.marginTop = '16px';
+    cont.innerHTML = `
+      <button class="btn" onclick="showToast('Botón 1 pulsado')">Botón 1</button>
+      <button class="btn secondary" onclick="showToast('Botón 2 pulsado')">Botón 2</button>
+    `;
+    app.prepend(cont); // o append según quieras
+  }
+
+  // Llamada a la función si quieres que aparezca siempre
+  window.addEventListener('load', addExtraButtons)
   </script>
 </body>
 </html>
