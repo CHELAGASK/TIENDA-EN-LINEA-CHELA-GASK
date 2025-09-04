@@ -483,6 +483,7 @@
       const p = PRODUCTS.find(x=>x.id===id);
       if(!p) return renderNotFound();
       const tallaDefault = (p.tallas && p.tallas[0]) || 'Única';
+      let tallaSel = tallaDefault;
       app.innerHTML = `
         <div class="grid" style="grid-template-columns: 1.1fr .9fr; gap:24px">
           <div>
@@ -499,7 +500,12 @@
             <div class="price" style="font-size:1.4rem;margin:6px 0 14px 0">${money(p.precio)}</div>
             <div style="margin:12px 0">
               <label>Talla</label>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">${(p.tallas||['Única']).map(t=>`<button class="btn secondary talla" data-t="${t}">${t}</button>`).join('')}</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                ${(p.tallas || ['Única']).map(t=>{
+                  const stock = p.stock[t] || 0;
+                  return `<button class="btn secondary talla" data-t="${t}" ${stock===0?'disabled style="opacity:.5"':''}>${t}</button>`;
+                }).join('')}
+              </div>
             </div>
             <div style="margin:12px 0">
               <label>Cantidad</label>
@@ -515,9 +521,7 @@
       `;
 
       // Galería
-      document.querySelectorAll('.thumb').forEach(th=>{
-        th.addEventListener('click', ()=>{ $('#mainImg').src = th.src; });
-      });
+      document.querySelectorAll('.thumb').forEach(th=>{th.addEventListener('click', ()=>{ $('#mainImg').src = th.src; });});
 
       // Tallas
       let tallaSel = tallaDefault; markTalla();
@@ -690,22 +694,7 @@
     
     function renderNotFound(){ app.innerHTML = '<p>Página no encontrada.</p>'; }
 
-    // ===========================
-  // AÑADIDO: BOTONES NUEVOS (solo agregado)
-  // ===========================
-  // Ejemplo de función de agregar botón extra para votación o acción extra
-  function addExtraButtons(){
-    const cont = document.createElement('div');
-    cont.style.marginTop = '16px';
-    cont.innerHTML = `
-      <button class="btn" onclick="showToast('Botón 1 pulsado')">Botón 1</button>
-      <button class="btn secondary" onclick="showToast('Botón 2 pulsado')">Botón 2</button>
-    `;
-    app.prepend(cont); // o append según quieras
-  }
 
-  // Llamada a la función si quieres que aparezca siempre
-  window.addEventListener('load', addExtraButtons)
   </script>
 </body>
 </html>
