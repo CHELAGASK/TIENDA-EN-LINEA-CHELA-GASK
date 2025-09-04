@@ -161,11 +161,7 @@
     // CONFIGURACIÓN
     // ==========================
     // Cambia aquí si quieres otros héroes (si no existen las imágenes, se usan placeholders)
-    const CAROUSEL_IMAGES = [
-      'modelo1.jpg',
-      'modelo2.jpg',
-      'modelo3.jpg'
-    ];
+    const CAROUSEL_IMAGES = ['modelo1.jpg','modelo2.jpg','modelo3.jpg'];
     const CAROUSEL_INTERVAL_MS = 4000;
 
     // URL CSV público de Google Sheets (tú lo publicaste como CSV). Ya puse el link que me diste:
@@ -173,18 +169,8 @@
 
     // Fallback: productos embebidos (se usan si la carga desde Google falla)
     let PRODUCTS = [];
-
-
     
-    const BANNER_INFO = {
-      titulo: 'Atención y envíos',
-      lineas: [
-        'Envíos a todo México. Tiempo estimado 2–5 días hábiles.',
-        'Cambios y devoluciones dentro de los 7 días con ticket.',
-        'WhatsApp de atención: 44xx xxx xxx (10:00–19:00).',
-        'Promos y novedades en Instagram: @chelagask.'
-      ]
-    };
+    const BANNER_INFO = {titulo: 'Atención y envíos',lineas: ['Envíos a todo México. Tiempo estimado 2–5 días hábiles.','Cambios y devoluciones dentro de los 7 días con ticket.','WhatsApp de atención: 44xx xxx xxx (10:00–19:00).','Promos y novedades en Instagram: @chelagask.']};
 
     // ==========================
     // UTILIDADES
@@ -195,6 +181,8 @@
     const state = { idx:0 };
     const CATS = ['caballero','dama','nino','accesorios','ropones','bisuteria'];
 
+
+    
     // ========================
     // AÑADIDO: Render de categoría
     // ========================
@@ -481,23 +469,6 @@
       // --------------- ADICIÓN SÚPER PEQUEÑA: si aún no hay productos (carga asíncrona), intentar cargarlos y re-renderizar
       const norm = normalizeForCompare(cat);
       if(!CATS.includes(norm)) return renderNotFound();
-
-      //(SE AÑADIO) Si PRODUCTS está vacío, mostrar mensaje y forzar carga desde CSV (por si el usuario entró antes de que load() completara)
-      if((!PRODUCTS || PRODUCTS.length === 0) && SHEET_CSV_URL){
-        app.innerHTML = `
-          <section class="bar"><span class="dot"></span> ${cat.toUpperCase()}</section>
-          <p class="muted">Cargando productos... (intentando desde Google Sheets)</p>
-        `;
-        // Intentar cargar y luego re-renderizar la misma categoría
-        fetchProductsFromCSV(SHEET_CSV_URL).then(() => {
-          // small delay to ensure UI updates
-          setTimeout(()=> renderCategory(cat), 80);
-        }).catch(()=>{
-          // si falla, seguirá usando fallback (si existe)
-          setTimeout(()=> renderCategory(cat), 80);
-        });
-        return;
-      }
       
       const items = PRODUCTS.filter(p=> normalizeForCompare(p.categoria) === norm);
       app.innerHTML = `
@@ -716,6 +687,7 @@
       `;
     }
 
+    
     function renderNotFound(){ app.innerHTML = '<p>Página no encontrada.</p>'; }
 
   </script>
