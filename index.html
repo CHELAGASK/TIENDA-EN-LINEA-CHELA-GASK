@@ -479,68 +479,71 @@
     }
 
     // PRODUCTO
-  function renderProduct(id){
-  const p = PRODUCTS.find(x=>x.id===id);
-  if(!p) return renderNotFound();
-
-  const tallaDefault = (p.tallas && p.tallas[0]) || 'Única';
-
-  app.innerHTML = `
-    <div class="grid" style="grid-template-columns: 1.1fr .9fr; gap:24px">
-      <div>
-        <img id="mainImg" src="${p.imagenes[0]}" alt="${p.nombre}" style="width:100%;border-radius:12px;object-fit:contain;max-height:500px">
-        <div id="gal" class="grid" style="grid-template-columns:repeat(auto-fit,minmax(60px,1fr)); gap:10px;margin-top:12px">
-          ${p.imagenes.map(img=>`
-            <img src="${img}" alt="${p.nombre}" style="border:1px solid var(--border);border-radius:8px;cursor:pointer;max-height:80px;object-fit:contain">
-          `).join('')}
-        </div>
-      </div>
-      <div>
-        <h2>${p.nombre}</h2>
-        <div class="price" style="font-size:1.3rem;margin:6px 0">${money(p.precio)}</div>
-        <p class="muted" style="margin:10px 0">${p.categoria}</p>
-
-        <label for="talla">Talla</label>
-        <select id="talla">
-          ${p.tallas.length ? p.tallas.map(t=>`<option value="${t}">${t}</option>`).join('') : `<option value="${tallaDefault}">${tallaDefault}</option>`}
-        </select>
-
-        <div style="margin:16px 0">
-          <label>Cantidad</label><br>
-          <div class="qty">
-            <button id="decQty">-</button>
-            <span id="qtyVal">1</span>
-            <button id="incQty">+</button>
+   function renderProduct(id){
+      const p = PRODUCTS.find(x=>x.id===id);
+      if(!p) return renderNotFound();
+      const tallaDefault = (p.tallas && p.tallas[0]) || 'Única';
+      app.innerHTML = `
+        <div class="grid" style="grid-template-columns: 1.1fr .9fr; gap:24px">
+          <div>
+            <div id="gal" class="grid" style="grid-template-columns:repeat(5, minmax(0,1fr)); gap:10px; margin-bottom:10px">
+              ${p.imagenes.map((src,i)=>`<img class="thumb" data-i="${i}" style="border:1px solid var(--border);border-radius:10px;cursor:pointer" src="${src}" alt="${p.nombre} ${i+1}">`).join('')}
+            </div>
+            <div style="border:1px solid var(--border);border-radius:16px;overflow:hidden">
+              <img id="mainImg" src="${p.imagenes[0]}" alt="${p.nombre}" style="width:100%;max-height:520px;object-fit:cover">
+            </div>
+          </div>
+          <div>
+            <h1 style="margin:0 0 8px 0">${p.nombre}</h1>
+            <div class="muted">Modelo: ${p.id}</div>
+            <div class="price" style="font-size:1.4rem;margin:6px 0 14px 0">${money(p.precio)}</div>
+            <div style="margin:12px 0">
+              <label>Talla</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">${(p.tallas||['Única']).map(t=>`<button class="btn secondary talla" data-t="${t}">${t}</button>`).join('')}</div>
+            </div>
+            <div style="margin:12px 0">
+              <label>Cantidad</label>
+              <div class="qty"><button onclick="chgQty(-1)">−</button><span id="qty">1</span><button onclick="chgQty(1)">+</button></div>
+            </div>
+            <div class="muted" id="stockMsg">Disponibles: ${(p.stock && p.stock[tallaDefault])?p.stock[tallaDefault]: (p.stock && Object.values(p.stock)[0]) || 0}</div>
+            <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn" id="addBtn">Agregar al carrito</button>
+              <a class="btn secondary" href="#/carrito">Ver carrito</a>
+            </div>
           </div>
         </div>
+      `;
 
-        <button class="btn" id="addCartBtn">Añadir al carrito</button>
-      </div>
-    </div>
-    ${renderBanner()}
-  `;
+      // Galería
+      document.querySelectorAll('.thumb').forEach(th=>{
+        th.addEventListener('click', ()=>{ $('#mainImg').src = th.src; });
+      });
 
-  // --- eventos de miniaturas
-  document.querySelectorAll('#gal img').forEach(img=>{
-    img.addEventListener('click', ()=>{ $('#mainImg').src = img.src; });
-  });
+      // Tallas
+      let tallaSel = tallaDefault; markTalla();
+      document.querySelectorAll('.talla').forEach(b=>{
+        b.addEventListener('click', ()=>{ tallaSel = b.dataset.t; markTalla(); $('#stockMsg').textContent = 'Disponibles: '+(p.stock[tallaSel]||0); });
+      });
+      function markTalla(){
+        document.querySelectorAll('.talla').forEach(x=>x.style.borderColor='var(--border)');
+        const btn = document.querySelector(`.talla[data-t="${tallaSel}"]`); if(btn) btn.style.borderColor='#111';
+      }
 
-  // --- cantidad
-  let qty = 1;
-  $('#decQty').addEventListener('click', ()=>{ if(qty>1){ qty--; $('#qtyVal').textContent=qty; } });
-  $('#incQty').addEventListener('click', ()=>{ qty++; $('#qtyVal').textContent=qty; });
+      // Cantidad
+      window.chgQty = function(d){ const el=$('#qty'); let v=+el.textContent; v=Math.max(1, v+d); el.textContent=v };
 
-  // --- añadir al carrito
-  $('#addCartBtn').addEventListener('click', ()=>{
-    const talla = $('#talla').value || tallaDefault;
-    const cart = getCart();
-    const found = cart.find(i=>i.id===p.id && i.talla===talla);
-    if(found){ found.cantidad += qty; }
-    else { cart.push({id:p.id,nombre:p.nombre,precio:p.precio,talla, cantidad:qty, imagen:p.imagenes[0]}); }
-    setCart(cart);
-    showToast('Producto añadido al carrito');
-  });
-}
+      // Agregar al carrito
+      $('#addBtn').addEventListener('click', ()=>{
+        const cantidad = +$('#qty').textContent;
+        const stock = p.stock[tallaSel]||0;
+        if(cantidad>stock){ showToast('No hay suficientes piezas en stock para esa talla.'); return; }
+        const cart = getCart();
+        cart.push({ id:p.id, nombre:p.nombre, precio:p.precio, talla:tallaSel, cantidad, imagen:p.imagenes[0] });
+        setCart(cart);
+        showToast('Se agregó al carrito.');
+      });
+    }
+
 
     // CARRITO
     function renderCart(){
