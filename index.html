@@ -723,6 +723,67 @@
       }
     }
 
+
+// FAVORITOS     
+  function renderFavoritos(){
+  let favs = JSON.parse(localStorage.getItem('favs')||'[]');
+  const favoritos = PRODUCTS.filter(p => favs.includes(p.id));
+
+  app.innerHTML = `
+    <h1>Mis Favoritos ❤️</h1>
+    ${favoritos.length === 0 ? `
+      <p class="muted">No tienes productos en favoritos.</p>
+      <a class="btn" href="#/">Ir a la tienda</a>
+    ` : `
+      <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px">
+        ${favoritos.map(p=>`
+          <div class="card" style="border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center">
+            <img src="${p.imagenes[0]}" alt="${p.nombre}" style="width:100%;height:180px;object-fit:cover;border-radius:10px;cursor:pointer" onclick="location.hash='#/producto/${p.id}'">
+            <h3 style="margin:10px 0 4px 0">${p.nombre}</h3>
+            <div class="muted">${money(p.precio)}</div>
+            <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center">
+              <button class="btn small" onclick="addFav('${p.id}')">Quitar</button>
+              <button class="btn secondary small" onclick="addFavCart('${p.id}')">Agregar al carrito</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `}
+  `;
+
+  // Helpers internos
+  window.addFav = function(id){
+    let favs = JSON.parse(localStorage.getItem('favs')||'[]');
+    favs = favs.filter(f=>f!==id);
+    localStorage.setItem('favs', JSON.stringify(favs));
+    renderFavoritos(); // recarga lista
+    showToast('Se quitó de favoritos.');
+  };
+
+  window.addFavCart = function(id){
+    const p = PRODUCTS.find(x=>x.id===id);
+    if(!p) return;
+    // Usa la primera talla disponible
+    let stock = {};
+    if(p.tallasRaw){ 
+      p.tallasRaw.split('|').forEach(t=>{
+        let [k,v] = t.split(':');
+        stock[k] = +v;
+      });
+    } else {
+      stock = p.stock || {};
+    }
+    const talla = Object.keys(stock).find(t=>stock[t]>0) || 'Única';
+    if(!talla){ showToast('Este producto no tiene stock disponible.'); return; }
+
+    const cart = getCart();
+    cart.push({ id:p.id, nombre:p.nombre, precio:p.precio, talla, cantidad:1, imagen:p.imagenes[0] });
+    setCart(cart);
+    showToast('Se agregó al carrito desde favoritos.');
+  };
+}
+
+
     // POST-PAGO
     function renderPostPago(){
       const data = JSON.parse(sessionStorage.getItem('cg_postpago')||'null');
