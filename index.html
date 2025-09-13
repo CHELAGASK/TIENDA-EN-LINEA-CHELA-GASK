@@ -208,8 +208,7 @@
       return `
         <article class="card">
           <a href="#/producto/${encodeURIComponent(p.id)}">
-            <img loading="lazy" src="${p.imagenes && p.imagenes[0] ? p.imagenes[0] : 'https://dummyimage.com/400x400/ccc/000&text=Sin+imagen'}" alt="${p.nombre}">
-          </a>
+             <img loading="lazy" src="${p.imagenes[0]}" alt="${p.nombre}">
           <div class="meta">
             <h4>${p.nombre}</h4>
             <div class="price">${money(p.precio)}</div>
@@ -480,17 +479,23 @@
       `;
     }
 
+ function normalizeImages(product) {
+  if (!product.imagenes) {
+    product.imagenes = ['https://dummyimage.com/400x400/ccc/000&text=Sin+imagen'];
+  } else if (typeof product.imagenes === 'string') {
+    product.imagenes = product.imagenes.split('|').map(s => s.trim());
+  }
+  return product;
+}
+
+// Normalizar todos los productos al cargar
+PRODUCTS = PRODUCTS.map(normalizeImages);   
+
+    
     // PRODUCTO
 function renderProduct(id){
   const p = PRODUCTS.find(x=>x.id===id);
   if(!p) return renderNotFound();
-
-  console.log("IMAGENES DEL PRODUCTO:", p.imagenes);  // 👈 AGREGA ESTO
-
-// ✅ Si 'imagenes' viene como string con "|", conviértelo en array
-if (typeof p.imagenes === "string") {
-  p.imagenes = p.imagenes.split("|");
-}
   
   // Parsear tallas desde formato Excel "XS:0|S:10|M:5|..."
   let stock = {};
