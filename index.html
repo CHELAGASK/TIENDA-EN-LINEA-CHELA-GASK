@@ -383,6 +383,7 @@
       if(route==='categoria') return renderCategory(a);
       if(route==='producto') return renderProduct(decodeURIComponent(a));
       if(route==='carrito') return renderCart();
+      if (route === 'favoritos') return renderFavoritos();
       if(route==='postpago' || route==='gracias') return renderPostPago();
       return renderNotFound();
     }
