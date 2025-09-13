@@ -485,6 +485,8 @@ function renderProduct(id){
   const p = PRODUCTS.find(x=>x.id===id);
   if(!p) return renderNotFound();
 
+  console.log("IMAGENES DEL PRODUCTO:", p.imagenes);  // 👈 AGREGA ESTO
+
 // ✅ Si 'imagenes' viene como string con "|", conviértelo en array
 if (typeof p.imagenes === "string") {
   p.imagenes = p.imagenes.split("|");
