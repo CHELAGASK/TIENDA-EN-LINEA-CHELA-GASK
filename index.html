@@ -485,6 +485,11 @@ function renderProduct(id){
   const p = PRODUCTS.find(x=>x.id===id);
   if(!p) return renderNotFound();
 
+// ✅ Si 'imagenes' viene como string con "|", conviértelo en array
+if (typeof p.imagenes === "string") {
+  p.imagenes = p.imagenes.split("|");
+}
+  
   // Parsear tallas desde formato Excel "XS:0|S:10|M:5|..."
   let stock = {};
   if(p.tallasRaw){ 
