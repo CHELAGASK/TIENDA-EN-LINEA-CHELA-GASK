@@ -482,7 +482,7 @@
     }
     
 function normalizeImages(product) {
-  let raw = product.Imagenes; // ahora ya la columna es "Imagenes"
+  let raw = product.imagenes; // ahora ya la columna es "Imagenes"
   if (!raw || raw.trim() === "") {
     product.imagenes = ['https://dummyimage.com/400x400/ccc/000&text=Sin+imagen'];
   } else {
@@ -493,8 +493,6 @@ function normalizeImages(product) {
 
 // Normalizar todos los productos al cargar
 PRODUCTS = PRODUCTS.map(normalizeImages);   
-
-console.log("Imagenes normalizadas:", product.imagenes);
 
     
     // PRODUCTO
