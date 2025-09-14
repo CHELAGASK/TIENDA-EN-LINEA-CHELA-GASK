@@ -502,7 +502,6 @@ function renderProduct(id){
   const p = PRODUCTS.find(x=>x.id===id);
   if(!p) return renderNotFound();
   
-  console.log("Campo Imagenes crudo:", product.Imagenes);
   
   // Parsear tallas desde formato Excel "XS:0|S:10|M:5|..."
   let stock = {};
