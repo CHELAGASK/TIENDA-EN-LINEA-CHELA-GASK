@@ -479,12 +479,17 @@
       `;
     }
 
- function normalizeImages(product) {
-  if (!product.imagenes) {
-    product.imagenes = ['https://dummyimage.com/400x400/ccc/000&text=Sin+imagen'];
-  } else if (typeof product.imagenes === 'string') {
-    product.imagenes = product.imagenes.split('|').map(s => s.trim());
+function normalizeImages(product) {
+  // Si viene de Sheets como "Imagen", pásalo a "imagenes"
+  if (product.Imagen && !product.imagenes) {
+    product.imagenes = product.Imagen.split("|").map(s => s.trim());
   }
+
+  // Si no hay nada, mete placeholder
+  if (!product.imagenes || product.imagenes.length === 0) {
+    product.imagenes = ['https://dummyimage.com/400x400/ccc/000&text=Sin+imagen'];
+  }
+
   return product;
 }
 
