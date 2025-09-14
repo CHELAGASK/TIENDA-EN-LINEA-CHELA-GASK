@@ -208,7 +208,9 @@
       return `
         <article class="card">
           <a href="#/producto/${encodeURIComponent(p.id)}">
-             <img loading="lazy" src="${p.imagenes[0]}" alt="${p.nombre}">
+             <img loading="lazy" 
+     src="${p.imagenes && p.imagenes[0] ? p.imagenes[0] : 'https://dummyimage.com/400x400/ccc/000&text=Sin+imagen'}" 
+     alt="${p.nombre}">
           <div class="meta">
             <h4>${p.nombre}</h4>
             <div class="price">${money(p.precio)}</div>
@@ -479,24 +481,23 @@
       `;
     }
 
+console.log("Campo Imagenes crudo:", product.Imagenes);
+
+    
 function normalizeImages(product) {
-  // Si viene de Sheets como "Imagen", pásalo a "imagenes"
-  if (product.Imagen && !product.imagenes) {
-    product.imagenes = product.Imagen.split("|").map(s => s.trim());
-  }
-
-  // Si no hay nada, mete placeholder
-  if (!product.imagenes || product.imagenes.length === 0) {
+  let raw = product.Imagenes; // ahora ya la columna es "Imagenes"
+  if (!raw || raw.trim() === "") {
     product.imagenes = ['https://dummyimage.com/400x400/ccc/000&text=Sin+imagen'];
+  } else {
+    product.imagenes = raw.split('|').map(s => s.trim());
   }
-
   return product;
 }
 
 // Normalizar todos los productos al cargar
 PRODUCTS = PRODUCTS.map(normalizeImages);   
 
-console.log(PRODUCTS);
+console.log("Imagenes normalizadas:", product.imagenes);
 
     
     // PRODUCTO
