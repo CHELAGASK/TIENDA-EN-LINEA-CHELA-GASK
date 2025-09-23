@@ -642,7 +642,7 @@ function renderCart(){
   const cart = getCart();
   const total = cart.reduce((a,i)=>a + i.precio * i.cantidad, 0);
 
-  const lines = cart.map((i, idx)=>{
+  const lines = cart.map(i=>{
     return Array.from({length:i.cantidad}, (_,k)=>`
       <div class="card" style="padding:10px;display:grid;grid-template-columns:90px 1fr auto auto;gap:10px;align-items:center">
         <img src="${i.imagen}" alt="${i.nombre}" style="height:80px;width:80px;object-fit:cover;border-radius:10px;border:1px solid var(--border)">
@@ -651,9 +651,9 @@ function renderCart(){
           <div class="muted">Talla: ${i.talla}</div>
         </div>
         <div style="text-align:right">${money(i.precio)}</div>
-        <button class="btn secondary" style="padding:4px 8px" onclick="removeFromCart(${idx})">❌</button>
+        <button class="btn secondary" style="padding:4px 8px" onclick="removeFromCart('${i.id}','${i.talla}')">❌</button>
       </div>
-    `).join('');
+    `).join('')
   }).join('');
 
   app.innerHTML = `
@@ -708,7 +708,7 @@ function renderCart(){
             </div>
             <div>
               <label>Teléfono</label>
-              <input required name="telefono" pattern="[0-9\\s+()-]{8,}" />
+              <input required name="telefono" pattern="[0-9\s+()-]{8,}" />
             </div>
             <div class="error" id="formError" style="display:none">Completa todos los campos obligatorios.</div>
           </form>
@@ -734,18 +734,13 @@ function renderCart(){
   const cpInput = document.querySelector('input[name="cp"]');
   if(cpInput){
     cpInput.addEventListener('input', ()=>{
-      const v = cpInput.value.replace(/\\D/g,''); 
-      if(v.length>=2){ $('#estadoAuto').value = CP_MAP[v.slice(0,2)] || ''; }
+      const v = cpInput.value.replace(/\D/g,''); if(v.length>=2){ $('#estadoAuto').value = CP_MAP[v.slice(0,2)] || ''; }
     });
   }
 
   window.simularPago = function(tipo){
     const form = document.getElementById('envioForm');
-    if(!form.checkValidity()){ 
-      $('#formError').style.display='block'; 
-      form.reportValidity(); 
-      return; 
-    }
+    if(!form.checkValidity()){ $('#formError').style.display='block'; form.reportValidity(); return; }
     $('#formError').style.display='none';
     if(tipo==='ok'){
       const datos = Object.fromEntries(new FormData(form).entries());
@@ -761,14 +756,20 @@ function renderCart(){
   }
 }
 
-// ✅ Nueva función para eliminar un producto
-function removeFromCart(index){
-  const cart = getCart();
-  cart.splice(index,1); // elimina el producto en la posición index
-  setCart(cart);
-  renderCart();
+// 👉 Nueva función para eliminar una unidad
+function removeFromCart(id, talla){
+  let cart = getCart();
+  const idx = cart.findIndex(i => i.id === id && i.talla === talla);
+  if(idx > -1){
+    if(cart[idx].cantidad > 1){
+      cart[idx].cantidad -= 1;
+    } else {
+      cart.splice(idx,1);
+    }
+    setCart(cart);
+    renderCart(); // refresca carrito
+  }
 }
-
 
 // FAVORITOS     
   function renderFavoritos(){
