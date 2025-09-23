@@ -637,120 +637,137 @@ function renderProduct(id){
   });
 }
 
-    // CARRITO
-    function renderCart(){
-      const cart = getCart();
-      const total = cart.reduce((a,i)=>a + i.precio * i.cantidad, 0);
-      const lines = cart.map(i=>{
-        return Array.from({length:i.cantidad}, (_,k)=>`<div class="card" style="padding:10px;display:grid;grid-template-columns:90px 1fr auto;gap:10px">
-          <img src="${i.imagen}" alt="${i.nombre}" style="height:80px;width:80px;object-fit:cover;border-radius:10px;border:1px solid var(--border)">
-          <div>
-            <div><strong>${i.nombre}</strong> <span class="muted">(${i.id})</span></div>
-            <div class="muted">Talla: ${i.talla}</div>
-          </div>
-          <div style="text-align:right">${money(i.precio)}</div>
-        </div>`).join('')
-      }).join('');
+   // CARRITO
+function renderCart(){
+  const cart = getCart();
+  const total = cart.reduce((a,i)=>a + i.precio * i.cantidad, 0);
 
-      app.innerHTML = `
-        <section class="bar"><span class="dot"></span> CONFIRMACIÓN DE COMPRA</section>
-        <div class="grid" style="grid-template-columns: 1.1fr .9fr; gap:20px">
-          <div>
-            ${cart.length? lines : '<p class="muted">Tu carrito está vacío.</p>'}
-            <div style="text-align:right;margin-top:10px"><strong>TOTAL: ${money(total)}</strong></div>
+  const lines = cart.map((i, idx)=>{
+    return Array.from({length:i.cantidad}, (_,k)=>`
+      <div class="card" style="padding:10px;display:grid;grid-template-columns:90px 1fr auto auto;gap:10px;align-items:center">
+        <img src="${i.imagen}" alt="${i.nombre}" style="height:80px;width:80px;object-fit:cover;border-radius:10px;border:1px solid var(--border)">
+        <div>
+          <div><strong>${i.nombre}</strong> <span class="muted">(${i.id})</span></div>
+          <div class="muted">Talla: ${i.talla}</div>
+        </div>
+        <div style="text-align:right">${money(i.precio)}</div>
+        <button class="btn secondary" style="padding:4px 8px" onclick="removeFromCart(${idx})">❌</button>
+      </div>
+    `).join('');
+  }).join('');
 
-            <section class="banner" style="margin-top:16px">
-              <h3>Datos de envío a domicilio</h3>
-              <form id="envioForm" class="form">
-                <div class="row">
-                  <div>
-                    <label>Nombre</label>
-                    <input required name="nombre" />
-                  </div>
-                  <div>
-                    <label>Apellidos</label>
-                    <input required name="apellidos" />
-                  </div>
-                </div>
-                <div class="row">
-                  <div>
-                    <label>Código Postal (CP)</label>
-                    <input required name="cp" pattern="\\d{5}" placeholder="5 dígitos" />
-                  </div>
-                  <div>
-                    <label>Estado (auto)</label>
-                    <input required name="estado" id="estadoAuto" readonly />
-                  </div>
-                </div>
-                <div class="row">
-                  <div>
-                    <label>Calle</label>
-                    <input required name="calle" />
-                  </div>
-                  <div>
-                    <label>Número</label>
-                    <input required name="numero" />
-                  </div>
-                </div>
-                <div class="row">
-                  <div>
-                    <label>Número interior (opcional)</label>
-                    <input name="interior" />
-                  </div>
-                  <div>
-                    <label>Correo</label>
-                    <input required type="email" name="correo" />
-                  </div>
-                </div>
-                <div>
-                  <label>Teléfono</label>
-                  <input required name="telefono" pattern="[0-9\s+()-]{8,}" />
-                </div>
-                <div class="error" id="formError" style="display:none">Completa todos los campos obligatorios.</div>
-              </form>
-            </section>
-          </div>
-          <div>
-            <div class="card" style="padding:14px">
-              <h3 style="margin:4px 0 12px 0">Pago</h3>
-              <p class="muted" style="margin-top:0">Integración real con Mercado Pago requiere un pequeño backend (ver comentarios en el código). Abajo tienes un simulador de flujo:</p>
-              <div style="display:flex;flex-direction:column;gap:10px">
-                <button class="btn" onclick="simularPago('ok')">Pagar (Simular OK)</button>
-                <button class="btn secondary" onclick="simularPago('error')">Simular ERROR</button>
-                <button class="btn secondary" onclick="simularPago('insuficiente')">Simular FONDOS INSUFICIENTES</button>
+  app.innerHTML = `
+    <section class="bar"><span class="dot"></span> CONFIRMACIÓN DE COMPRA</section>
+    <div class="grid" style="grid-template-columns: 1.1fr .9fr; gap:20px">
+      <div>
+        ${cart.length? lines : '<p class="muted">Tu carrito está vacío.</p>'}
+        <div style="text-align:right;margin-top:10px"><strong>TOTAL: ${money(total)}</strong></div>
+
+        <section class="banner" style="margin-top:16px">
+          <h3>Datos de envío a domicilio</h3>
+          <form id="envioForm" class="form">
+            <div class="row">
+              <div>
+                <label>Nombre</label>
+                <input required name="nombre" />
+              </div>
+              <div>
+                <label>Apellidos</label>
+                <input required name="apellidos" />
               </div>
             </div>
+            <div class="row">
+              <div>
+                <label>Código Postal (CP)</label>
+                <input required name="cp" pattern="\\d{5}" placeholder="5 dígitos" />
+              </div>
+              <div>
+                <label>Estado (auto)</label>
+                <input required name="estado" id="estadoAuto" readonly />
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label>Calle</label>
+                <input required name="calle" />
+              </div>
+              <div>
+                <label>Número</label>
+                <input required name="numero" />
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label>Número interior (opcional)</label>
+                <input name="interior" />
+              </div>
+              <div>
+                <label>Correo</label>
+                <input required type="email" name="correo" />
+              </div>
+            </div>
+            <div>
+              <label>Teléfono</label>
+              <input required name="telefono" pattern="[0-9\\s+()-]{8,}" />
+            </div>
+            <div class="error" id="formError" style="display:none">Completa todos los campos obligatorios.</div>
+          </form>
+        </section>
+      </div>
+      <div>
+        <div class="card" style="padding:14px">
+          <h3 style="margin:4px 0 12px 0">Pago</h3>
+          <p class="muted" style="margin-top:0">Integración real con Mercado Pago requiere un pequeño backend (ver comentarios en el código). Abajo tienes un simulador de flujo:</p>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <button class="btn" onclick="simularPago('ok')">Pagar (Simular OK)</button>
+            <button class="btn secondary" onclick="simularPago('error')">Simular ERROR</button>
+            <button class="btn secondary" onclick="simularPago('insuficiente')">Simular FONDOS INSUFICIENTES</button>
           </div>
         </div>
-        ${renderBanner()}
-      `;
+      </div>
+    </div>
+    ${renderBanner()}
+  `;
 
-      // Autollenado Estado por CP
-      const CP_MAP = { '01':'Aguascalientes','02':'Baja California','03':'Baja California Sur','04':'Campeche','05':'Coahuila','06':'Colima','07':'Chiapas','08':'Chihuahua','09':'Ciudad de México','10':'Durango','11':'Guanajuato','12':'Guerrero','13':'Hidalgo','14':'Jalisco','15':'México','16':'Michoacán','17':'Morelos','18':'Nayarit','19':'Nuevo León','20':'Oaxaca','21':'Puebla','22':'Querétaro','23':'Quintana Roo','24':'San Luis Potosí','25':'Sinaloa','26':'Sonora','27':'Tabasco','28':'Tamaulipas','29':'Tlaxcala','30':'Veracruz','31':'Yucatán','32':'Zacatecas' };
-      const cpInput = document.querySelector('input[name="cp"]');
-      if(cpInput){
-        cpInput.addEventListener('input', ()=>{
-          const v = cpInput.value.replace(/\D/g,''); if(v.length>=2){ $('#estadoAuto').value = CP_MAP[v.slice(0,2)] || ''; }
-        });
-      }
+  // Autollenado Estado por CP
+  const CP_MAP = { '01':'Aguascalientes','02':'Baja California','03':'Baja California Sur','04':'Campeche','05':'Coahuila','06':'Colima','07':'Chiapas','08':'Chihuahua','09':'Ciudad de México','10':'Durango','11':'Guanajuato','12':'Guerrero','13':'Hidalgo','14':'Jalisco','15':'México','16':'Michoacán','17':'Morelos','18':'Nayarit','19':'Nuevo León','20':'Oaxaca','21':'Puebla','22':'Querétaro','23':'Quintana Roo','24':'San Luis Potosí','25':'Sinaloa','26':'Sonora','27':'Tabasco','28':'Tamaulipas','29':'Tlaxcala','30':'Veracruz','31':'Yucatán','32':'Zacatecas' };
+  const cpInput = document.querySelector('input[name="cp"]');
+  if(cpInput){
+    cpInput.addEventListener('input', ()=>{
+      const v = cpInput.value.replace(/\\D/g,''); 
+      if(v.length>=2){ $('#estadoAuto').value = CP_MAP[v.slice(0,2)] || ''; }
+    });
+  }
 
-      window.simularPago = function(tipo){
-        const form = document.getElementById('envioForm');
-        if(!form.checkValidity()){ $('#formError').style.display='block'; form.reportValidity(); return; }
-        $('#formError').style.display='none';
-        if(tipo==='ok'){
-          const datos = Object.fromEntries(new FormData(form).entries());
-          const resumen = { items:getCart(), total: getCart().reduce((a,i)=>a+i.precio*i.cantidad,0), envio:datos };
-          sessionStorage.setItem('cg_postpago', JSON.stringify(resumen));
-          location.hash = '/postpago';
-          setCart([]);
-        } else if(tipo==='error') {
-          showToast('PAGO ERROR: intenta nuevamente.');
-        } else {
-          showToast('Fondos insuficientes: intenta con otro método.');
-        }
-      }
+  window.simularPago = function(tipo){
+    const form = document.getElementById('envioForm');
+    if(!form.checkValidity()){ 
+      $('#formError').style.display='block'; 
+      form.reportValidity(); 
+      return; 
     }
+    $('#formError').style.display='none';
+    if(tipo==='ok'){
+      const datos = Object.fromEntries(new FormData(form).entries());
+      const resumen = { items:getCart(), total: getCart().reduce((a,i)=>a+i.precio*i.cantidad,0), envio:datos };
+      sessionStorage.setItem('cg_postpago', JSON.stringify(resumen));
+      location.hash = '/postpago';
+      setCart([]);
+    } else if(tipo==='error') {
+      showToast('PAGO ERROR: intenta nuevamente.');
+    } else {
+      showToast('Fondos insuficientes: intenta con otro método.');
+    }
+  }
+}
+
+// ✅ Nueva función para eliminar un producto
+function removeFromCart(index){
+  const cart = getCart();
+  cart.splice(index,1); // elimina el producto en la posición index
+  setCart(cart);
+  renderCart();
+}
 
 
 // FAVORITOS     
