@@ -216,15 +216,8 @@
      alt="${p.nombre}">
           <div class="meta">
             <h4>${p.nombre}</h4>
-            <div class="price">
-            ${p.promo && p.descuento > 0 
-    ? `
-      <span style="font-weight:bold;color:#000">${money(p.precio * (1 - p.descuento/100))}</span>
-      <span style="text-decoration:line-through;color:gray;margin-left:6px">${money(p.precio)}</span>
-      <span style="color:green;margin-left:6px">${p.descuento}% de descuento</span>
-    ` 
-    : money(p.precio)
-  }</div>
+            <div class="price">${p.promo && p.descuento > 0 }</div>
+    
           </div>
         </article>
       `;
