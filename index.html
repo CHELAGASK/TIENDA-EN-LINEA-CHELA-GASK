@@ -208,7 +208,7 @@
 
     // Tarjeta de producto
     function cardHTML(p){
-      // Si el producto está en promoción calcula el precio con descuento
+  // Si el producto está en promoción calcula el precio con descuento
   let precioActual = p.precio;
   let precioAnterior = null;
   let etiquetaDescuento = '';
@@ -220,19 +220,22 @@
   }
 
   return `
-        <article class="card">
-          <a href="#/producto/${encodeURIComponent(p.id)}">
-             <img loading="lazy" 
-     src="${p.imagenes && p.imagenes[0] ? p.imagenes[0] : 'https://dummyimage.com/400x400/ccc/000&text=Sin+imagen'}" 
-     alt="${p.nombre}">
-          <div class="meta">
-            <h4>${p.nombre}</h4>
-            <div class="price">${p.promo && p.descuento > 0 }</div>
-    
-          </div>
-        </article>
-      `;
-    }
+    <article class="card">
+      <a href="#/producto/${encodeURIComponent(p.id)}">
+        <img loading="lazy" src="${p.imagenes && p.imagenes[0] ? p.imagenes[0] : 'https://dummyimage.com/600x400/ddd/000&text=Sin+imagen'}" alt="${p.nombre}">
+      </a>
+      <div class="meta">
+        <div class="muted" style="font-size:.85rem;text-transform:uppercase">${p.categoria}</div>
+        <a href="#/producto/${encodeURIComponent(p.id)}"><strong>${p.nombre}</strong></a>
+        <div class="price">
+          <strong>${money(precioActual)}</strong>
+          ${precioAnterior ? `<span style="text-decoration:line-through;color:#888;margin-left:6px;">${money(precioAnterior)}</span>` : ''}
+          ${etiquetaDescuento}
+        </div>
+      </div>
+    </article>
+  `;
+}
 
     function showToast(msg){
       toast.textContent = msg; toast.classList.add('show');
