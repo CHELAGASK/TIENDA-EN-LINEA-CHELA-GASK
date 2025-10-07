@@ -488,60 +488,20 @@
     }
 
     function cardHTML(p){
-  // Convertimos a número
-  let precioOriginal = parseFloat(p.precio) || 0;
-  let descuento = parseFloat(p.descuento) || 0;
-
-  // Variables para mostrar
-  let precioActual = precioOriginal;
-  let precioTachado = "";
-  let etiquetaDescuento = "";
-
-  // Si está en promo y el descuento es mayor a 0
-  if (p.promo && p.promo.toLowerCase() === "si" && descuento > 0) {
-    precioActual = precioOriginal * (1 - descuento / 100);
-
-    // Precio original tachado
-    precioTachado = `<span style="
-        text-decoration: line-through;
-        color: #888;
-        margin-left: 5px;
-      ">
-        $${precioOriginal.toFixed(2)}
-      </span>`;
-
-    // Porcentaje en verde
-    etiquetaDescuento = `<span style="
-        color: green;
-        font-weight: bold;
-        margin-left: 5px;
-      ">
-        -${descuento}%
-      </span>`;
-  }
-
   return `
-    <article class="card">
-      <a href="#/producto/${encodeURIComponent(p.id)}">
-        <img loading="lazy"
-          src="${
-            p.imagenes && p.imagenes[0]
-              ? p.imagenes[0]
-              : "https://dummyimage.com/400x400/ccc/000&text=Sin+imagen"
-          }"
-          alt="${p.nombre}">
-      </a>
-      <div class="meta">
-        <h4>${p.nombre}</h4>
-        <div class="price">
-          $${precioActual.toFixed(2)}
-          ${precioTachado}
-          ${etiquetaDescuento}
+      <article class="card">
+        <a href="#/producto/${encodeURIComponent(p.id)}">
+          <img loading="lazy" src="${p.imagenes && p.imagenes[0] ? p.imagenes[0] : 'https://dummyimage.com/600x400/ddd/000&text=Sin+imagen'}" alt="${p.nombre}">
+        </a>
+        <div class="meta">
+          <div class="muted" style="font-size:.85rem;text-transform:uppercase">${p.categoria}</div>
+          <a href="#/producto/${encodeURIComponent(p.id)}"><strong>${p.nombre}</strong></a>
+          <div class="price">${p.precio}</div>
         </div>
-      </div>
-    </article>
+      </article>
   `;
 }
+
 
     function renderBanner(){
       return `
