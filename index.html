@@ -208,7 +208,18 @@
 
     // Tarjeta de producto
     function cardHTML(p){
-      return `
+      // Si el producto está en promoción calcula el precio con descuento
+  let precioActual = p.precio;
+  let precioAnterior = null;
+  let etiquetaDescuento = '';
+
+  if (p.promo && p.descuento > 0) {
+    precioAnterior = p.precio; // guarda el precio original
+    precioActual = p.precio * (1 - p.descuento / 100); // aplica descuento
+    etiquetaDescuento = `<span style="color:green;font-weight:bold;margin-left:6px;">-${p.descuento}%</span>`;
+  }
+
+  return `
         <article class="card">
           <a href="#/producto/${encodeURIComponent(p.id)}">
              <img loading="lazy" 
