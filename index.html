@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="es"> 
 <head>
   <meta charset="utf-8" />
@@ -171,6 +171,27 @@
     // URL CSV público de Google Sheets (tú lo publicaste como CSV). Ya puse el link que me diste:
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQA5cjti6B1RjNH6KVj-bap6xLoILJ91CONi5d6Ybj1R6T0etd44373NBhCxLYY-yqQPtepU1rWy0hd/pub?output=csv';
 
+    // ==========================
+// CONFIGURACIÓN DE IMÁGENES DESDE GITHUB
+// ==========================
+
+// Base URL donde están las imágenes en tu repo
+const IMAGES_GITHUB_BASE = 'https://raw.githubusercontent.com/CHELAGASK/TIENDA-EN-LINEA-CHELA-GASK/main/img/products/';
+
+// Función para generar arreglo de imágenes según el ID del producto
+function generateImageArray(p, max = 5) {
+  // Tomamos el ID como base
+  const base = p.id ? p.id.toString().trim() : '';
+  const urls = [];
+
+  for (let i = 1; i <= max; i++) {
+    // Creamos las rutas tipo 3-1.jpg, 3-2.jpg, etc.
+    urls.push(`${IMAGES_GITHUB_BASE}${base}-${i}.jpg`);
+  }
+
+  return urls;
+}
+    
     // Fallback: productos embebidos (se usan si la carga desde Google falla)
     let PRODUCTS = [];
     
@@ -340,6 +361,8 @@
             p.imagenes = obj.imagenes.split('|').map(x=>x.trim()).filter(Boolean);
             if(p.imagenes.length===0) p.imagenes = obj.imagenes.split(',').map(x=>x.trim()).filter(Boolean);
           }
+          // 🔥 Genera las URLs completas de tus imágenes desde GitHub
+          p.imagenes = generateImageArray(p);
           // tallas
           if(obj.tallas) p.tallas = obj.tallas.split('|').map(x=>x.trim()).filter(Boolean);
           if(p.tallas.length===0 && obj.tallas) p.tallas = obj.tallas.split(',').map(x=>x.trim()).filter(Boolean);
